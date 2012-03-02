@@ -1,0 +1,4 @@
+# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+title=Simple app sample for test with H2Dialect

@@ -1,0 +1,151 @@
+Job(bsad2):
+    name: teste-bsad2 
+    absolutePath: /opt/ips/config/build/jobs/teste-bsad2
+    category: BSAD2
+    builds: build_bsad2
+    enabled: true
+
+Job(bsad3):
+    name: teste-bsad3 
+    absolutePath: /opt/ips/config/build/jobs/teste-bsad3
+    category: BSAD3
+    builds: build_bsad3
+    enabled: false
+
+Build(build_bsad2):
+    job: bsad2
+    dirName: 2011-07-15_15-51-20
+    dirPath: /opt/ips/config/build/jobs/teste-bsad/builds/2011-07-15_15-51-20
+    javadocs: 10000
+    commentLines: 5000
+    totalSources: 15000
+    seloQualidade: 
+    duration: 234563
+    isRelease: true
+    isSuccess: true
+    date: 2011-07-02
+
+Build(build_bsad3):
+    job: bsad3
+    dirName: 2011-07-02_16-42-34
+    dirPath: /opt/ips/config/build/jobs/teste-bsad/builds/2011-07-02_16-42-34
+    javadocs: 7000
+    commentLines: 4000
+    totalSources: 12000
+    seloQualidade: 
+    duration: 24123
+    isRelease: true
+    isSuccess: true
+    date: 2011-07-02
+    
+Extraction(e1):
+    job: bsad2
+    endDate: 2011-07-31
+    extractionDate: 2011-07-31  
+    startDate: 2011-07-01
+    totalApprovedReleases: 0
+    totalRejectedReleases: 0
+    totalValuedReleases: 1
+    totalCreatedReleases: 0
+    totalValuedBuilds: 1
+    totalRejectedBuilds: 0 
+    totalApprovedBuilds: 0
+    totalJavadocs: 10000
+    totalComments: 5000
+    totalSources: 15000
+    totalLines: 30000
+    totalCobol: 0
+    totalWebservice: 1 
+    totalEjb: 0
+    totalJobs: 2
+    totalEnabledJobs: 1
+    totalUniqueComponents: 3
+    totalComponents: 1700
+    bsad2MinDurationBuild: 952668  
+    bsad2MaxDurationBuild: 1071135
+    bsad3MinDurationBuild: 0
+    bsad3MaxDurationBuild: 0
+
+Extraction(e2):
+    job: bsad2
+    endDate: 2011-07-31
+    extractionDate: 2011-07-31  
+    startDate: 2011-07-01
+    totalApprovedReleases: 0
+    totalRejectedReleases: 0
+    totalValuedReleases: 1
+    totalCreatedReleases: 1
+    totalValuedBuilds: 0
+    totalRejectedBuilds: 0 
+    totalApprovedBuilds: 1
+    totalJavadocs: 2000
+    totalComments: 8000
+    totalSources: 10000
+    totalLines: 20000
+    totalCobol: 1
+    totalWebservice: 0 
+    totalEjb: 1
+    totalJobs: 2
+    totalEnabledJobs: 1
+    totalUniqueComponents: 1
+    totalComponents: 1700
+    bsad2MinDurationBuild: 265451  
+    bsad2MaxDurationBuild: 398478
+    bsad3MinDurationBuild: 0
+    bsad3MaxDurationBuild: 0
+
+Extraction(e3):
+    job: bsad3
+    endDate: 2011-07-31
+    extractionDate: 2011-07-31  
+    startDate: 2011-07-01
+    totalApprovedReleases: 1
+    totalRejectedReleases: 1
+    totalValuedReleases: 2
+    totalCreatedReleases: 3
+    totalValuedBuilds: 1
+    totalRejectedBuilds: 1 
+    totalApprovedBuilds: 2
+    totalJavadocs: 1000
+    totalComments: 4000
+    totalSources: 5000
+    totalLines: 10000
+    totalCobol: 2
+    totalWebservice: 0 
+    totalEjb: 0
+    totalJobs: 2
+    totalEnabledJobs: 1
+    totalUniqueComponents: 0
+    totalComponents: 1700
+    bsad2MinDurationBuild: 0
+    bsad2MaxDurationBuild: 0
+    bsad3MinDurationBuild: 366721
+    bsad3MaxDurationBuild: 479726
+
+Extraction(e4):
+    job: bsad3
+    endDate: 2011-07-31
+    extractionDate: 2011-07-31  
+    startDate: 2011-07-01
+    totalApprovedReleases: 0
+    totalRejectedReleases: 0
+    totalValuedReleases: 0
+    totalCreatedReleases: 0
+    totalValuedBuilds: 0
+    totalRejectedBuilds: 0 
+    totalApprovedBuilds: 0
+    totalJavadocs: 6000
+    totalComments: 4000
+    totalSources: 5000
+    totalLines: 15000
+    totalCobol: 2
+    totalWebservice: 0 
+    totalEjb: 1
+    totalJobs: 2
+    totalEnabledJobs: 1
+    totalUniqueComponents: 1
+    totalComponents: 1700
+    bsad2MinDurationBuild: 0
+    bsad2MaxDurationBuild: 0
+    bsad3MinDurationBuild: 309049
+    bsad3MaxDurationBuild: 309049

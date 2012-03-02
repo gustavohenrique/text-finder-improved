@@ -1,0 +1,13 @@
+# Application dependencies
+
+require:
+    - play
+    - org.seleniumhq.selenium -> selenium-java 2.20.0
+
+repositories:
+    - jboss:
+        type: iBiblio
+        root: "http://repository.jboss.org/nexus/content/groups/public-jboss/"
+        contains:
+            - org.jbpm -> *
+            - org.drools -> *

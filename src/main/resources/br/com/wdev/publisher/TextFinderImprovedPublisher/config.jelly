@@ -1,0 +1,30 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry title="Arquivos Incluidos" description="Ex.: **/*.java">
+        <f:textbox field="includes" />
+    </f:entry>
+    
+    <f:entry title="Arquivos Excluidos" description="Ex.: **/*.xml">
+        <f:textbox field="excludes" />
+    </f:entry>
+    
+    <f:entry title="Expressao a ser procurada" description="Ex.: LOG">
+        <f:textbox field="regexp" />
+    </f:entry>
+    
+    <f:entry title="Case Sensitive">
+        <f:checkbox type="checkbox" name="sensitive" checked="${instance.sensitive}"/>
+    </f:entry>
+
+    <f:entry title="Se a expressao for encontrada, marcar build como:">
+        <select name="buildResult">
+            <f:option value="success" selected='${instance.buildResult=="success"}'>Sucesso</f:option>
+            <f:option value="unstable" selected='${instance.buildResult=="unstable"}'>Instável</f:option>
+        </select>
+    </f:entry>
+    
+    <f:entry title="">
+        <f:checkbox name="checkOnlyConsoleOutput" checked="${instance.checkOnlyConsoleOutput}" />
+        <label class="attach-previous">Buscar somente no console output</label>
+    </f:entry>
+  
+</j:jelly>

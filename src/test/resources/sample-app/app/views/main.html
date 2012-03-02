@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+   
+    <title>IPS Dashboard</title>
+    
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}"> 
+    
+    <link rel="stylesheet" media="all" href="@{'/public/stylesheets/style.css'}">
+    <link rel="stylesheet" media="all" href="@{'/public/stylesheets/jquery.wysiwyg.css'}">
+    <link rel="stylesheet" media="all" href="@{'/public/stylesheets/facebox.css'}">
+    <link rel="stylesheet" media="all" href="@{'/public/stylesheets/visualize.css'}">
+    <link rel="stylesheet" media="all" href="@{'/public/stylesheets/date_input.css'}">
+    
+    <script type="text/javascript" src="@{'/public/javascripts/jquery-1.5.2.min.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/jquery.img.preload.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/jquery.filestyle.mini.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/jquery.wysiwyg.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/jquery.date_input.pack.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/facebox.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/jquery.visualize.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/jquery.visualize.tooltip.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/jquery.select_skin.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/jquery.tablesorter.min.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/ajaxupload.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/jquery.pngfix.js'}"></script>
+    <script type="text/javascript" src="@{'/public/javascripts/custom.js'}"></script>
+    
+    #{get 'myscripts' /}
+    
+    <!--[if lt IE 8]>
+        <link rel="stylesheet" media="all" href="@{'/public/stylesheets/ie.css'}">
+    <![endif]-->
+</head>
+
+<body>
+    <div id="hld">
+        <div class="wrapper">       <!-- wrapper begins -->
+            <div id="header">
+                <div class="hdrl"></div>
+                <div class="hdrr"></div>
+                
+                <h1><a href="/dashboard">IPS</a></h1>
+                
+                <ul id="nav">
+                    <li #{if title == 'Indicadores'}class="active"#{/}>#{a @Dashboard.index() }Indicadores#{/a}</li>
+                    <li #{if title == 'Charts'}class="active"#{/}>#{a @Charts.index() }Gr&aacute;ficos#{/a}</li>
+                </ul>
+                #{get 'combobox' /}
+
+            </div> <!-- #header ends -->
+            
+            #{doLayout /}
+            
+        </div> <!-- wrapper ends -->
+        
+    </div> <!-- #hld ends -->
+    
+</body>
+</html>

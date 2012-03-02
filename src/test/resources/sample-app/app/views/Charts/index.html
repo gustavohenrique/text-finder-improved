@@ -1,0 +1,139 @@
+#{extends 'main.html' /}
+
+#{set 'myscripts'}
+<script type="text/javascript" src="@{'/public/javascripts/highcharts/highcharts.js'}"></script>
+<script type="text/javascript" src="@{'/public/javascripts/highcharts/modules/exporting.js'}"></script>
+<script type="text/javascript" src="@{'/public/javascripts/app/basicchart.js'}"></script>
+
+<script type="text/javascript">
+
+var quality_categories = ['Comentários', 'Javadocs', 'Código fonte'];
+var quality_series = [
+    #{list items:qualityCharts, as:'chart'}         
+        { name: "${chart?.extractionDate?.format('MM/yyyy')}", data: [ ${chart?.comments}, ${chart?.javadocs},${chart?.sources} ] },
+    #{/list}
+];
+
+var releases_categories = ['Criadas', 'Avaliadas', 'Não aceitas'];
+var releases_series = [
+    #{list items:qualityCharts, as:'chart'}         
+        { name: "${chart?.extractionDate?.format('MM/yyyy')}", data: [ ${chart?.createdReleases}, ${chart?.valuedReleases},${chart?.rejectedReleases} ] },
+    #{/list}
+];
+
+var reuse_categories = ['Cobol', 'EJB', 'Webservice'];
+var reuse_series = [
+    #{list items:qualityCharts, as:'chart'}         
+        { name: "${chart?.extractionDate?.format('MM/yyyy')}", data: [ ${chart?.cobol}, ${chart?.ejb},${chart?.webservice} ] },
+    #{/list}
+];
+
+var build_bsad2_categories = ['Tempo mínimo', 'Tempo máximo'];
+var build_bsad2_series = [
+    #{list items:qualityCharts, as:'chart'}         
+        { name: "${chart?.extractionDate?.format('MM/yyyy')}", data: [ ${chart?.bsad2MinDurationBuild}, ${chart?.bsad2MaxDurationBuild} ] },
+    #{/list}
+];
+
+var build_bsad3_categories = ['Tempo mínimo', 'Tempo máximo'];
+var build_bsad3_series = [
+    #{list items:qualityCharts, as:'chart'}         
+        { name: "${chart?.extractionDate?.format('MM/yyyy')}", data: [ ${chart?.bsad3MinDurationBuild}, ${chart?.bsad3MaxDurationBuild} ] },
+    #{/list}
+];
+
+
+$(document).ready(function() {
+    qualitychart = get_bar_chart('quality', quality_categories, quality_series, '%', 'dashboard-qualidade-codigo');
+    releaseschart = get_bar_chart('releases', releases_categories, releases_series, '', 'dashboard-avaliacao-releases');
+    reusechart = get_bar_chart('reuse', reuse_categories, reuse_series, '', 'dashboard-reuso-componentes');
+    build_bsad2_chart = get_bar_chart('build_bsad2', build_bsad2_categories, build_bsad2_series, ' minuto(s)', 'dashboard-duracao-bsad2');
+    build_bsad3_chart = get_bar_chart('build_bsad3', build_bsad3_categories, build_bsad3_series, ' minuto(s)', 'dashboard-duracao-bsad3');
+});
+
+</script>
+#{/}
+
+#{set title: 'Charts' /}
+
+
+<div class="block">
+   <div class="block_head">
+       <div class="bheadl"></div>
+       <div class="bheadr"></div>
+       
+       <h2>Qualidade de C&oacute;digo</h2>
+   </div>
+   <div class="block_content">
+       <div id="quality"></div>
+       <div class="block"></div>
+   </div>
+   
+   <div class="bendl"></div>
+   <div class="bendr"></div>
+</div>
+
+<div class="block">
+   <div class="block_head">
+       <div class="bheadl"></div>
+       <div class="bheadr"></div>
+       
+       <h2>Avalia&ccedil;&atilde;o de Releases</h2>
+   </div>
+   <div class="block_content">
+       <div id="releases"></div>
+       <div class="block"></div>
+   </div>
+   
+   <div class="bendl"></div>
+   <div class="bendr"></div>
+</div>
+
+<div class="block">
+   <div class="block_head">
+       <div class="bheadl"></div>
+       <div class="bheadr"></div>
+       
+       <h2>Reuso de Componentes</h2>
+   </div>
+   <div class="block_content">
+       <div id="reuse"></div>
+       <div class="block"></div>
+   </div>
+   
+   <div class="bendl"></div>
+   <div class="bendr"></div>
+</div>
+
+<div class="block">
+   <div class="block_head">
+       <div class="bheadl"></div>
+       <div class="bheadr"></div>
+       
+       <h2>Dura&ccedil;&atilde;o do Build BSAD2</h2>
+   </div>
+   <div class="block_content">
+       <div id="build_bsad2"></div>
+       <div class="block"></div>
+   </div>
+   
+   <div class="bendl"></div>
+   <div class="bendr"></div>
+</div>
+
+<div class="block">
+   <div class="block_head">
+       <div class="bheadl"></div>
+       <div class="bheadr"></div>
+       
+       <h2>Dura&ccedil;&atilde;o do Build BSAD3</h2>
+   </div>
+   <div class="block_content">
+       <div id="build_bsad3"></div>
+       <div class="block"></div>
+   </div>
+   
+   <div class="bendl"></div>
+   <div class="bendr"></div>
+</div>
+

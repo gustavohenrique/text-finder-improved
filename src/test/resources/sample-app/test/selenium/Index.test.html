@@ -1,0 +1,26 @@
+#{fixture delete:'all', load:'data.yml' /}
+
+#{selenium 'Test resumo dos indicadores'}
+ 
+    open('/dashboard')
+    assertTextPresent('Indicadores')
+    assertTextPresent('Gráficos')
+    
+    assertText('totalUnitestCoveragePercentual', '1')
+    assertText('totalUnitestErrorsPercentual', '0')
+    assertText('commentsPercentual', '28.0')
+    assertText('javadocsPercentual', '25.33')
+    assertText('rejectedReleasesPercentual', '25.0')
+    
+    assertText('averageBuildTimeBsad2', '12')
+    assertText('averageBuildTimeBsad3', '8')
+    assertText('totalJobs', '2')
+    assertText('totalEnabledJobs', '1')
+    
+    assertText('totalComponents', '1700')
+    assertText('componentsReused', '8')
+    assertText('totalUniqueComponents', '5')
+    assertText('totalComponentsReusedPercentual', '62.5')
+    assertText('totalBsraComponentsReusedPercentual', '0.29')
+ 
+#{/selenium}
