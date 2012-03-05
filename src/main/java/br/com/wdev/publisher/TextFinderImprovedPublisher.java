@@ -2,14 +2,16 @@ package br.com.wdev.publisher;
 
 import static hudson.Util.fixEmpty;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.remoting.RemoteOutputStream;
+import hudson.model.Computer;
 import hudson.remoting.VirtualChannel;
+import hudson.slaves.SlaveComputer;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -18,7 +20,6 @@ import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -28,6 +29,7 @@ import javax.servlet.ServletException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import br.com.wdev.action.FinderAction;
 import br.com.wdev.helpers.Finder;
 
 
@@ -63,27 +65,35 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
     }
 
     public boolean perform(final AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-    	PrintStream logger = listener.getLogger();
-    	final RemoteOutputStream ros = new RemoteOutputStream(logger);
     	
     	build.getWorkspace().act(new FileCallable<Boolean>() {
     		
-    		public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
-                PrintStream logger = new PrintStream(ros);
+    		public Boolean invoke(File workspace, VirtualChannel channel) throws IOException {
                 
                 final String DEFAULT_SEPARATOR = " ";
                 
-                Finder finder = new Finder(ws, includes.split(DEFAULT_SEPARATOR), excludes.split(DEFAULT_SEPARATOR), regexp);
+                Finder finder = new Finder(workspace, includes.split(DEFAULT_SEPARATOR), excludes.split(DEFAULT_SEPARATOR), regexp);
                 finder.setBuildResult(buildResult);
-        		finder.checkOnlyConsoleOutput(checkOnlyConsoleOutput);
+        		finder.checkOnlyConsoleOutput = checkOnlyConsoleOutput;
         		finder.setCaseSensitive(sensitive);
-        		finder.setLogger(logger);
         		
         		finder.findText();
         		
-        		build.setResult(finder.getBuildResult());
+//        		XmlParserUtil xmlParserUtil = new XmlParserUtil();
+//                xmlParserUtil.toXml(finder, new File(workspace.getAbsolutePath() + "/text-finder-improved.xml"));
         		
-        		return finder.getReports().size() > 0;
+        		
+        		File buildDir = build.getRootDir();
+        		if(Computer.currentComputer() instanceof SlaveComputer) {
+                    FilePath workspaceOnSlave = build.getWorkspace();
+                    buildDir = new File(workspaceOnSlave.getRemote());
+        		}
+        		
+        		build.getActions().add(new FinderAction(buildDir, finder));
+        		
+        		build.setResult(finder.buildResult);
+        		
+        		return finder.reports.size() > 0;
         		
     		}
     	});

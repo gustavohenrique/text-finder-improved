@@ -1,10 +1,13 @@
 package br.com.wdev.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Report {
+public class Report implements Serializable {
 
-	private String fileName;
+    private static final long serialVersionUID = 9059825035315694714L;
+
+    private String fileName;
 	
 	private List<String> lines;
 	

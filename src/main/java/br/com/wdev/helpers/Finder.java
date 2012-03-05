@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -18,25 +18,25 @@ import org.apache.tools.ant.DirectoryScanner;
 
 import br.com.wdev.model.Report;
 
-public class Finder {
+public class Finder implements Serializable {
 	
-	private File workspace;
+    private static final long serialVersionUID = 1227802849153892243L;
 
-	private String[] includes;
+    private File workspace;
+
+	public String[] includes;
 	
-	private String[] excludes;
+	public String[] excludes;
 	
-	private String regexp;
+	public String regexp;
 	
-	private boolean checkOnlyConsoleOutput;
+	public boolean checkOnlyConsoleOutput;
 	
-	private boolean sensitive;
+	public boolean caseSensitive;
 	
-	private PrintStream logger;
+	public Result buildResult;
 	
-	private Result buildResult;
-	
-	private List<Report> reports;
+	public List<Report> reports;
 
 	
 	public Finder(File workspace, String[] includes, String[] excludes, String regexp) {
@@ -73,7 +73,7 @@ public class Finder {
 	private DirectoryScanner getDirectoryScanner(File workspace, String[] includes, String[] excludes) {
 		DirectoryScanner ds = new DirectoryScanner();
 		ds.setBasedir(workspace);
-		ds.setCaseSensitive(sensitive);
+		ds.setCaseSensitive(caseSensitive);
 		
 		if (includes != null) {
 			ds.setIncludes(includes);
@@ -119,21 +119,9 @@ public class Finder {
         }
     }
     
-    public List<Report> getReports() {
-		return reports;
-	}
-    
-    public void checkOnlyConsoleOutput(boolean checkOnlyConsoleOutput) {
-    	this.checkOnlyConsoleOutput = checkOnlyConsoleOutput;
-    }
-    
     public void setCaseSensitive(boolean sensitive) {
-    	this.sensitive = sensitive;
+    	this.caseSensitive = sensitive;
     }
-    
-    public void setLogger(PrintStream logger) {
-		this.logger = logger;
-	}
     
     public void setBuildResult(String result) {
     	if ("success".equals(result)) {
@@ -145,11 +133,9 @@ public class Finder {
     }
     
     private void log(String message) {
-    	logger.println("Text Finder Improved: " + message);
+//    	logger.println("Text Finder Improved: " + message);
+    	System.out.println("Text Finder Improved: " + message);
     }
+  
 	
-	public Result getBuildResult() {
-		return buildResult;
-	}
-
 }

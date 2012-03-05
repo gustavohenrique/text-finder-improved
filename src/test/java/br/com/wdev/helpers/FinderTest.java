@@ -4,7 +4,6 @@ import hudson.model.Result;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -16,13 +15,10 @@ import br.com.wdev.model.Report;
 
 public class FinderTest extends TestCase {
 
-	private PrintStream logger;
-	
 	private File workspace;
 	
 	@Before
 	public void setUp() throws Exception {
-		logger = new PrintStream("/tmp/text-finder-improved.log");
 		workspace = new File("src/test/resources/sample-app");
 	}
 	
@@ -33,12 +29,11 @@ public class FinderTest extends TestCase {
 		
 		Finder finder = new Finder(workspace, includes, null, regexp);
 		finder.setBuildResult("success");
-		finder.setLogger(logger);
 		
 		finder.findText();
-		assertEquals(Result.SUCCESS, finder.getBuildResult());
+		assertEquals(Result.SUCCESS, finder.buildResult);
 		
-		List<Report> reports = finder.getReports();
+		List<Report> reports = finder.reports;
 		assertEquals(3, reports.size());
 		
 		assertEquals("Charts.java", reports.get(0).getFileName());
@@ -53,13 +48,12 @@ public class FinderTest extends TestCase {
 		
 		Finder finder = new Finder(workspace, includes, null, regexp);
 		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput(false);
-		finder.setLogger(logger);
+		finder.checkOnlyConsoleOutput = false;
 		finder.findText();
 		
-		assertEquals(Result.UNSTABLE, finder.getBuildResult());
+		assertEquals(Result.UNSTABLE, finder.buildResult);
 		
-		List<Report> reports = finder.getReports();
+		List<Report> reports = finder.reports;
 		assertEquals(1, reports.size());
 		
 		Report report = reports.get(0);
@@ -82,13 +76,12 @@ public class FinderTest extends TestCase {
 		
 		Finder finder = new Finder(workspace, includes, null, regexp);
 		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput(false);
-		finder.setLogger(logger);
+		finder.checkOnlyConsoleOutput = false;
 		finder.findText();
 		
-		assertEquals(Result.UNSTABLE, finder.getBuildResult());
+		assertEquals(Result.UNSTABLE, finder.buildResult);
 		
-		Report report = finder.getReports().get(0);
+		Report report = finder.reports.get(0);
 		
 		List<String> lines = report.getLines();
 		assertEquals("%prod.jpa.ddl=update", lines.get(0));
@@ -102,19 +95,18 @@ public class FinderTest extends TestCase {
 		
 		Finder finder = new Finder(workspace, includes, null, regexp);
 		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput(false);
-		finder.setLogger(logger);
+		finder.checkOnlyConsoleOutput = false;
 		finder.findText();
 		
-		assertEquals(2, finder.getReports().size());
+		assertEquals(2, finder.reports.size());
 		
-		List<String> applicationConfLines = finder.getReports().get(0).getLines();
+		List<String> applicationConfLines = finder.reports.get(0).getLines();
 		assertEquals("application.name=dashboard", applicationConfLines.get(0));
 		assertEquals("application.mode=dev", applicationConfLines.get(1));
 		assertEquals("%prod.application.mode=prod", applicationConfLines.get(2));
 		assertEquals("application.secret=dNTNhN5fQaqIYm8wggyujJx0vQVjtVSxrs45iJjvKQPOQlLBR7aWs8ZwnIpktjB6", applicationConfLines.get(3));
 		
-		List<String> messagesLines = finder.getReports().get(1).getLines();
+		List<String> messagesLines = finder.reports.get(1).getLines();
 		assertEquals("title=Simple app sample for test with H2Dialect", messagesLines.get(0));
 	}
 	
@@ -125,13 +117,12 @@ public class FinderTest extends TestCase {
 		
 		Finder finder = new Finder(workspace, includes, null, regexp);
 		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput(false);
-		finder.setLogger(logger);
+		finder.checkOnlyConsoleOutput = false;
 		finder.findText();
 		
-		assertEquals(1, finder.getReports().size());
+		assertEquals(1, finder.reports.size());
 		
-		List<String> messagesLines = finder.getReports().get(0).getLines();
+		List<String> messagesLines = finder.reports.get(0).getLines();
 		assertEquals("title=Simple app sample for test with H2Dialect", messagesLines.get(0));
 	}
 	
@@ -142,24 +133,40 @@ public class FinderTest extends TestCase {
 		
 		Finder finder = new Finder(workspace, includes, null, regexp);
 		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput(false);
-		finder.setLogger(logger);
+		finder.checkOnlyConsoleOutput = false;
 		finder.findText();
 		
-		assertEquals(1, finder.getReports().size());
+		assertEquals(1, finder.reports.size());
 		
-		List<String> messagesLines = finder.getReports().get(0).getLines();
+		List<String> messagesLines = finder.reports.get(0).getLines();
 		assertEquals("title=Simple app sample for test with H2Dialect", messagesLines.get(0));
 	}
 	
 	@Test
-	public void testFindSimpleStringInNotFoundFile() throws FileNotFoundException {
+	public void testFindRegexUsingExcludes() throws FileNotFoundException {
+		String[] includes = {"**/messages", "**/application.conf"};
+		String[] excludes = {"**/application.conf"};
+		String regexp = ".*(H2Dialect|app).*";
+		
+		Finder finder = new Finder(workspace, includes, excludes, regexp);
+		finder.setBuildResult("unstable");
+		finder.checkOnlyConsoleOutput = false;
+		finder.findText();
+		
+		assertEquals(1, finder.reports.size());
+		
+		List<String> messagesLines = finder.reports.get(0).getLines();
+		assertEquals("title=Simple app sample for test with H2Dialect", messagesLines.get(0));
+	}
+	
+	@Test
+	public void testTryToFindSimpleStringButNotFoundFile() throws FileNotFoundException {
 		String[] includes = {"**/*.swp"};
 		String regexp = "consolided";
 		
 		Finder finder = new Finder(workspace, includes, null, regexp);
 		
-		List<Report> reports = finder.findText().getReports();
+		List<Report> reports = finder.findText().reports;
 		assertEquals(0, reports.size());
 	}
 	
