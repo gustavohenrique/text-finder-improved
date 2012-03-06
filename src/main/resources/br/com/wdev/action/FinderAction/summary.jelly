@@ -1,9 +1,11 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
-    <p>Regex: <j:out value="${it.displayName}"/></p>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <tr>
-        <td></td>
-        <td style="vertical-align:middle"><j:out value="${it.displayName}"/></td>
-        <td>hkdjshdkjfshlkjdshflskjdhflkjsdhfkjlshlkjfshfkjsdhflkjhslkjfhslkjh</td>
+      <td>
+        <a><img width="48" height="48" src="${it.iconFileName}" alt="" style="margin-right:1em"/></a>
+      </td>
+      <td style="vertical-align:middle">
+        <a href="${it.urlName}">${it.displayName} Relatório</a>
+      </td>
     </tr>
- 
+    
 </j:jelly>

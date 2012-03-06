@@ -12,7 +12,7 @@
     </f:entry>
     
     <f:entry title="Case Sensitive">
-        <f:checkbox type="checkbox" name="sensitive" checked="${instance.sensitive}"/>
+        <f:checkbox type="checkbox" name="caseSensitive" checked="${instance.caseSensitive}"/>
     </f:entry>
 
     <f:entry title="Se a expressao for encontrada, marcar build como:">

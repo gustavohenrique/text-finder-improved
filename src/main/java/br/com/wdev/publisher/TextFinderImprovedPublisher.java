@@ -2,16 +2,13 @@ package br.com.wdev.publisher;
 
 import static hudson.Util.fixEmpty;
 import hudson.Extension;
-import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Computer;
 import hudson.remoting.VirtualChannel;
-import hudson.slaves.SlaveComputer;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -32,7 +29,6 @@ import org.kohsuke.stapler.QueryParameter;
 import br.com.wdev.action.FinderAction;
 import br.com.wdev.helpers.Finder;
 
-
 public class TextFinderImprovedPublisher extends Recorder implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -43,7 +39,7 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
 	
     public final String regexp;
 	
-    public final boolean sensitive;
+    public final boolean caseSensitive;
 	
     public final boolean checkOnlyConsoleOutput;
 	
@@ -51,11 +47,11 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
 
     
 	@DataBoundConstructor
-    public TextFinderImprovedPublisher(String includes, String excludes, String regexp, boolean sensitive, String buildResult, boolean checkOnlyConsoleOutput) {
+    public TextFinderImprovedPublisher(String includes, String excludes, String regexp, boolean caseSensitive, String buildResult, boolean checkOnlyConsoleOutput) {
         this.includes = Util.fixNull(includes);
         this.excludes = Util.fixNull(excludes);
         this.regexp = Util.fixNull(regexp);
-        this.sensitive = sensitive;
+        this.caseSensitive = caseSensitive;
         this.buildResult = buildResult;
         this.checkOnlyConsoleOutput = checkOnlyConsoleOutput;
     }
@@ -70,32 +66,31 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
     		
     		public Boolean invoke(File workspace, VirtualChannel channel) throws IOException {
                 
-                final String DEFAULT_SEPARATOR = " ";
+                final String SPLIT_SEPARATOR = " ";
                 
-                Finder finder = new Finder(workspace, includes.split(DEFAULT_SEPARATOR), excludes.split(DEFAULT_SEPARATOR), regexp);
+                Finder finder = new Finder(workspace, includes.split(SPLIT_SEPARATOR), excludes.split(SPLIT_SEPARATOR), regexp);
                 finder.setBuildResult(buildResult);
         		finder.checkOnlyConsoleOutput = checkOnlyConsoleOutput;
-        		finder.setCaseSensitive(sensitive);
+        		finder.caseSensitive = caseSensitive;
         		
         		finder.findText();
         		
-//        		XmlParserUtil xmlParserUtil = new XmlParserUtil();
-//                xmlParserUtil.toXml(finder, new File(workspace.getAbsolutePath() + "/text-finder-improved.xml"));
+//        		File buildDir = getMasterOrSlaveBuildDir(build);
+//        		new XmlParserUtil().toXml(finder, new File(buildDir + workspace.separator + "text-finder-improved.xml"));
         		
-        		
-        		File buildDir = build.getRootDir();
-        		if(Computer.currentComputer() instanceof SlaveComputer) {
-                    FilePath workspaceOnSlave = build.getWorkspace();
-                    buildDir = new File(workspaceOnSlave.getRemote());
-        		}
-        		
-        		build.getActions().add(new FinderAction(buildDir, finder));
-        		
+        		build.getActions().add(new FinderAction(build, finder));
         		build.setResult(finder.buildResult);
         		
         		return finder.reports.size() > 0;
-        		
     		}
+
+//            private File getMasterOrSlaveBuildDir(final AbstractBuild<?, ?> build) {
+//        		if(Computer.currentComputer() instanceof SlaveComputer) {
+//                    FilePath workspaceOnSlave = build.getWorkspace();
+//                    return new File(workspaceOnSlave.getRemote());
+//        		}
+//                return build.getRootDir();
+//            }
     	});
     	
         return true;
@@ -129,6 +124,5 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
             }
         }
     }
-    
     
 }

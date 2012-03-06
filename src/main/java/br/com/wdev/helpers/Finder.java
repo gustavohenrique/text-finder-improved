@@ -119,10 +119,6 @@ public class Finder implements Serializable {
         }
     }
     
-    public void setCaseSensitive(boolean sensitive) {
-    	this.caseSensitive = sensitive;
-    }
-    
     public void setBuildResult(String result) {
     	if ("success".equals(result)) {
         	this.buildResult = Result.SUCCESS; 
