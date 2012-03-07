@@ -1,4 +1,4 @@
-package br.com.wdev.helpers;
+package br.com.wdev;
 
 import hudson.model.Result;
 
@@ -16,7 +16,6 @@ import java.util.regex.PatternSyntaxException;
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.DirectoryScanner;
 
-import br.com.wdev.model.Report;
 
 public class Finder implements Serializable {
 	

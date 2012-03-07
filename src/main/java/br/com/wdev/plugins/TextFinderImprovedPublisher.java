@@ -1,4 +1,4 @@
-package br.com.wdev.publisher;
+package br.com.wdev.plugins;
 
 import static hudson.Util.fixEmpty;
 import hudson.Extension;
@@ -26,8 +26,7 @@ import javax.servlet.ServletException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-import br.com.wdev.action.FinderAction;
-import br.com.wdev.helpers.Finder;
+import br.com.wdev.Finder;
 
 public class TextFinderImprovedPublisher extends Recorder implements Serializable {
 

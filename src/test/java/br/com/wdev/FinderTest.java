@@ -1,4 +1,4 @@
-package br.com.wdev.helpers;
+package br.com.wdev;
 
 import hudson.model.Result;
 
@@ -11,7 +11,8 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.com.wdev.model.Report;
+import br.com.wdev.Finder;
+import br.com.wdev.Report;
 
 public class FinderTest extends TestCase {
 

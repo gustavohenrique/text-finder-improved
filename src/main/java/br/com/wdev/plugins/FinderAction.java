@@ -1,8 +1,8 @@
-package br.com.wdev.action;
+package br.com.wdev.plugins;
 
 import hudson.model.Action;
 import hudson.model.AbstractBuild;
-import br.com.wdev.helpers.Finder;
+import br.com.wdev.Finder;
 
 public class FinderAction implements Action {
     
@@ -28,7 +28,7 @@ public class FinderAction implements Action {
     }
 
     public String getUrlName() {
-        return "finder-text-improved";
+        return "text-finder-improved";
     }
 
 }

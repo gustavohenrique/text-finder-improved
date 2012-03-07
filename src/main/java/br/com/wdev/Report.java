@@ -1,4 +1,4 @@
-package br.com.wdev.model;
+package br.com.wdev;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,5 +24,4 @@ public class Report implements Serializable {
 	public List<String> getLines() {
 		return lines;
 	}
-
 }

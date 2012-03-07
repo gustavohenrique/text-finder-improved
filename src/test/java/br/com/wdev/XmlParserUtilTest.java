@@ -1,4 +1,4 @@
-package br.com.wdev.util;
+package br.com.wdev;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,15 +11,17 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import br.com.wdev.helpers.Finder;
-import br.com.wdev.model.Report;
+import br.com.wdev.Finder;
+import br.com.wdev.Report;
+import br.com.wdev.XmlParserUtil;
 
 public class XmlParserUtilTest extends TestCase {
 
 	@Test
 	public void testGenerateXmlFileFromFinderObject() throws Exception {
 		Finder finder = getFinder();
-		File output = new File("/tmp/text-finder-improved.xml");
+		
+		File output = new File(getFile("text-finder-improved.xml"));
 		
 		XmlParserUtil xmlParserUtil = new XmlParserUtil();
 		xmlParserUtil.toXml(finder, output);
@@ -43,21 +45,21 @@ public class XmlParserUtilTest extends TestCase {
                     		"    <color>BLUE</color>" +
                     		"  </buildResult>" +
                     		"  <reports>" +
-                    		"    <br.com.wdev.model.Report>" +
+                    		"    <br.com.wdev.Report>" +
                     		"      <fileName>file1</fileName>" +
                     		"      <lines>" +
                     		"        <string>line1</string>" +
                     		"        <string>line2</string>" +
                     		"        <string>line3</string>" +
                     		"      </lines>" +
-                    		"    </br.com.wdev.model.Report>" +
-                    		"    <br.com.wdev.model.Report>" +
+                    		"    </br.com.wdev.Report>" +
+                    		"    <br.com.wdev.Report>" +
                     		"      <fileName>file2</fileName>" +
                     		"      <lines>" +
                     		"        <string>line4</string>" +
                     		"        <string>line5</string>" +
                     		"      </lines>" +
-                    		"    </br.com.wdev.model.Report>" +
+                    		"    </br.com.wdev.Report>" +
                     		"  </reports>" +
                     		"</text-finder-improved>";
 		
@@ -65,6 +67,11 @@ public class XmlParserUtilTest extends TestCase {
 		
 		assertEquals(expected, xml);
 	}
+
+    private String getFile(String filename) {
+        String tempDir = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator");
+        return tempDir + filename;
+    }
 
     private String getStringFrom(File output) throws Exception {
         FileInputStream xmlCreated = new FileInputStream(output);

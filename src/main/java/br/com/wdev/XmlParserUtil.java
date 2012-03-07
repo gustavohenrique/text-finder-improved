@@ -1,11 +1,10 @@
-package br.com.wdev.util;
+package br.com.wdev;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
-import br.com.wdev.helpers.Finder;
 
 import com.thoughtworks.xstream.XStream;
 
