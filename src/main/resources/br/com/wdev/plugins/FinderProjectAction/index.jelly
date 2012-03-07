@@ -1,0 +1,66 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+    <l:layout norefresh="true">
+       
+      <l:side-panel>
+        <st:include it="${it.project}" page="sidepanel.jelly" />
+      </l:side-panel>
+        
+      <l:main-panel>
+        <table style="padding-top:20px;">
+          <tbody>
+            <tr>
+              <td><h1><j:out value="${it.displayName}"/></h1></td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <j:forEach items="${it.finders}" var="finder">
+            <h2>Build #${finder.buildNumber}</h2>   
+         
+            <table class="sortable pane bigtable">
+                <thead>
+                  <th>Expressão Regular</th>
+                  <th>Arquivos incluidos</th>
+                  <th>Arquivos excluidos</th>
+                  <th width="30">Case Sensitive?</th>
+                  <th width="30">Apenas no Console Output?</th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>${finder.regexp}</td>
+                    
+                    <td>
+                        <j:forEach items="${finder.includes}" var="include">
+                         ${include}   
+                        </j:forEach>
+                    </td>
+                    
+                    <td>
+                        <j:forEach items="${finder.excludes}" var="exclude">
+                         ${exclude}   
+                        </j:forEach>
+                    </td>
+                    
+                    <td>${finder.caseSensitive}</td>
+                    <td>${finder.checkOnlyConsoleOutput}</td>
+                  </tr>
+                </tbody>
+            </table>
+            
+            <j:forEach items="${finder.reports}" var="report">
+              <table style="text-align:left;padding-top:10px;">
+                <thead>
+                  <th>${report.fileName}</th>
+                </thead>
+                <tbody><tr><td>
+                     <j:forEach items="${report.lines}" var="line">
+                       ${line}<br/>
+                     </j:forEach>
+                </td></tr></tbody>
+              </table>
+            </j:forEach>
+
+        </j:forEach>
+      </l:main-panel>
+    </l:layout>
+</j:jelly>

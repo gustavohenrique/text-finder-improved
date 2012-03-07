@@ -19,55 +19,70 @@ public class XmlParserUtilTest extends TestCase {
 
 	@Test
 	public void testGenerateXmlFileFromFinderObject() throws Exception {
-		Finder finder = getFinder();
+		List<Finder> finders = new ArrayList<Finder>();
+		finders.add(getFinder());
 		
-		File output = new File(getFile("text-finder-improved.xml"));
+		File output = new File(getFile(Constants.OUTPUT_XML_FILENAME));
 		
 		XmlParserUtil xmlParserUtil = new XmlParserUtil();
-		xmlParserUtil.toXml(finder, output);
+		xmlParserUtil.toXml(finders, output);
 
 		String xml = getStringFrom(output);
 		
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\">" +
-				            "<text-finder-improved>" +
-                    		"  <includes>" +
-                    		"    <string>**/*.java</string>" +
-                    		"  </includes>" +
-                    		"  <excludes>" +
-                    		"    <string>**/application.conf</string>" +
-                    		"  </excludes>" +
-                    		"  <regexp>phone</regexp>" +
-                    		"  <checkOnlyConsoleOutput>false</checkOnlyConsoleOutput>" +
-                    		"  <caseSensitive>false</caseSensitive>" +
-                    		"  <buildResult>" +
-                    		"    <name>SUCCESS</name>" +
-                    		"    <ordinal>0</ordinal>" +
-                    		"    <color>BLUE</color>" +
-                    		"  </buildResult>" +
-                    		"  <reports>" +
-                    		"    <br.com.wdev.Report>" +
-                    		"      <fileName>file1</fileName>" +
-                    		"      <lines>" +
-                    		"        <string>line1</string>" +
-                    		"        <string>line2</string>" +
-                    		"        <string>line3</string>" +
-                    		"      </lines>" +
-                    		"    </br.com.wdev.Report>" +
-                    		"    <br.com.wdev.Report>" +
-                    		"      <fileName>file2</fileName>" +
-                    		"      <lines>" +
-                    		"        <string>line4</string>" +
-                    		"        <string>line5</string>" +
-                    		"      </lines>" +
-                    		"    </br.com.wdev.Report>" +
-                    		"  </reports>" +
-                    		"</text-finder-improved>";
+		String expected =   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+		                    "<root>" +
+				            "  <br.com.wdev.Finder>" +
+                    		"    <includes>" +
+                    		"      <string>**/*.java</string>" +
+                    		"    </includes>" +
+                    		"    <excludes>" +
+                    		"      <string>**/application.conf</string>" +
+                    		"    </excludes>" +
+                    		"    <regexp>phone</regexp>" +
+                    		"    <checkOnlyConsoleOutput>false</checkOnlyConsoleOutput>" +
+                    		"    <caseSensitive>false</caseSensitive>" +
+                    		"    <buildResult>" +
+                    		"      <name>SUCCESS</name>" +
+                    		"      <ordinal>0</ordinal>" +
+                    		"      <color>BLUE</color>" +
+                    		"    </buildResult>" +
+                    		"    <buildNumber>10</buildNumber>" +
+                    		"    <reports>" +
+                    		"      <br.com.wdev.Report>" +
+                    		"        <fileName>file1</fileName>" +
+                    		"        <lines>" +
+                    		"          <string>line1</string>" +
+                    		"          <string>line2</string>" +
+                    		"          <string>line3</string>" +
+                    		"        </lines>" +
+                    		"      </br.com.wdev.Report>" +
+                    		"      <br.com.wdev.Report>" +
+                    		"        <fileName>file2</fileName>" +
+                    		"        <lines>" +
+                    		"          <string>line4</string>" +
+                    		"          <string>line5</string>" +
+                    		"        </lines>" +
+                    		"      </br.com.wdev.Report>" +
+                    		"    </reports>" +
+                    		"  </br.com.wdev.Finder>" +
+                    		"</root>";
 		
 		assertTrue(output.exists());
 		
 		assertEquals(expected, xml);
 	}
 
+	@Test
+    public void testConvertFromXmlToObject() throws Exception {
+        File xml = new File(getFile(Constants.OUTPUT_XML_FILENAME));
+        
+        XmlParserUtil xmlParserUtil = new XmlParserUtil();
+        List<Finder> finders = xmlParserUtil.fromXml(xml);
+        
+        assertEquals(1, finders.size());
+	}
+	
+	
     private String getFile(String filename) {
         String tempDir = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator");
         return tempDir + filename;
@@ -99,6 +114,7 @@ public class XmlParserUtilTest extends TestCase {
 		String[] excludes = {"**/application.conf"};
 		Finder finder = new Finder(null, includes, excludes, "phone");
 		finder.reports = reports;
+		finder.buildNumber = 10;
         return finder;
     }
 

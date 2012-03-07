@@ -35,6 +35,8 @@ public class Finder implements Serializable {
 	
 	public Result buildResult;
 	
+	public int buildNumber;
+	
 	public List<Report> reports;
 
 	

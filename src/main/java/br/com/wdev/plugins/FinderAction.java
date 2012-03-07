@@ -2,16 +2,17 @@ package br.com.wdev.plugins;
 
 import hudson.model.Action;
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import br.com.wdev.Finder;
 
 public class FinderAction implements Action {
     
-    public final AbstractBuild<?,?> build;
+    public AbstractBuild<?,?> build;
     
     private Finder finder;
     
-    public FinderAction(final AbstractBuild build, final Finder finder) {
-        this.build = build;
+    public FinderAction(final Run build, final Finder finder) {
+        this.build = (AbstractBuild<?, ?>) build;
         this.finder = finder;
     }
     

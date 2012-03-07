@@ -4,7 +4,7 @@
         <a><img width="48" height="48" src="${it.iconFileName}" alt="" style="margin-right:1em"/></a>
       </td>
       <td style="vertical-align:middle">
-        <a href="${it.urlName}">${it.displayName} Relatório</a>
+        <a href="${it.urlName}">${it.displayName}</a>
       </td>
     </tr>
     
