@@ -51,7 +51,6 @@ public class XmlParserUtil implements Serializable {
             return (List<Finder>) xstream.fromXML(getReader(filename));
         }
         catch (Exception e) { 
-            System.out.println(e.getMessage());
             return new ArrayList<Finder>();
         }
     }

@@ -9,11 +9,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 
 
@@ -27,7 +25,7 @@ public class Finder implements Serializable {
 	
 	public String[] excludes;
 	
-	public String regexp;
+	public String[] words;
 	
 	public boolean checkOnlyConsoleOutput;
 	
@@ -40,11 +38,11 @@ public class Finder implements Serializable {
 	public List<Report> reports;
 
 	
-	public Finder(File workspace, String[] includes, String[] excludes, String regexp) {
+	public Finder(File workspace, String[] includes, String[] excludes, String[] words) {
 		this.workspace = workspace;
 		this.includes = includes;
 		this.excludes = excludes;
-        this.regexp = regexp;
+        this.words = words;
         this.buildResult = Result.SUCCESS;
         this.checkOnlyConsoleOutput = false;
         
@@ -52,26 +50,38 @@ public class Finder implements Serializable {
 	}
 	
 	public Finder findText() {
-		try {
-			DirectoryScanner ds = getDirectoryScanner(workspace, includes, excludes);
-			ds.scan();
-            
-			Pattern pattern = getPattern(regexp);
-        	for (String includedFile : ds.getIncludedFiles()) {
-        		Report report = findPatterInFile(pattern, new File(workspace, includedFile));
-        		if (report != null) reports.add(report);
+	    if (isNotBlank(words)) {
+    		try {
+    			DirectoryScanner ds = getDirectoryScanner(workspace, includes, excludes);
+    			ds.scan();
+                
+            	for (String includedFile : ds.getIncludedFiles()) {
+            		Report report = findPatterInFile(words, new File(workspace, includedFile));
+            		if (report != null) reports.add(report);
+                }
+    
             }
-
-        }
-		catch (Exception e) {
-			log(e.getMessage());
-        	buildResult = Result.UNSTABLE;
-        }
+    		catch (Exception e) {
+    			log(e.getMessage());
+            	buildResult = Result.UNSTABLE;
+            }
+	    }
 		
 		return this;
 	}
 	
-	private DirectoryScanner getDirectoryScanner(File workspace, String[] includes, String[] excludes) {
+	private boolean isNotBlank(String[] words) {
+        if (words.length > 0) {
+            for (int i=0; i<words.length; i++) {
+                if (StringUtils.isNotBlank(words[i])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private DirectoryScanner getDirectoryScanner(File workspace, String[] includes, String[] excludes) {
 		DirectoryScanner ds = new DirectoryScanner();
 		ds.setBasedir(workspace);
 		ds.setCaseSensitive(caseSensitive);
@@ -86,7 +96,7 @@ public class Finder implements Serializable {
 		return ds;
 	}
 
-	private Report findPatterInFile(Pattern pattern, File file) throws IOException {
+	private Report findPatterInFile(String[] words, File file) throws IOException {
 		Report report = null;
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line;
@@ -94,11 +104,19 @@ public class Finder implements Serializable {
         List<String> lines = new ArrayList<String>();
             
         while ((line = reader.readLine()) != null) {
-            Matcher matcher = pattern.matcher(line);
-            if (matcher.find()) {
-                lines.add(line);
+            for (String word : words) {
                 
-                if (checkOnlyConsoleOutput) break;
+                if (! caseSensitive) {
+                    line = StringUtils.lowerCase(line);
+                    word = StringUtils.lowerCase(word);
+                }
+                
+                if (line.contains(word)) {
+                    line = StringUtils.trim(line);
+                    lines.add(line);
+                    
+                    if (checkOnlyConsoleOutput) break;
+                }
             }
         }
         
@@ -110,16 +128,6 @@ public class Finder implements Serializable {
 		return report;
     }
 
-    private Pattern getPattern(String regexp) throws Exception {
-        try {
-        	return Pattern.compile(regexp);
-        }
-        catch (PatternSyntaxException e) {
-            log("Unable to compile regular expression: " + regexp);
-            throw new Exception();
-        }
-    }
-    
     public void setBuildResult(String result) {
     	if ("success".equals(result)) {
         	this.buildResult = Result.SUCCESS; 

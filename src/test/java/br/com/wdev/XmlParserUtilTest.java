@@ -112,7 +112,8 @@ public class XmlParserUtilTest extends TestCase {
 		
 		String[] includes = {"**/*.java"};
 		String[] excludes = {"**/application.conf"};
-		Finder finder = new Finder(null, includes, excludes, "phone");
+		String[] searchString = {"phone"};
+		Finder finder = new Finder(null, includes, excludes, searchString);
 		finder.reports = reports;
 		finder.buildNumber = 10;
         return finder;

@@ -11,9 +11,6 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.com.wdev.Finder;
-import br.com.wdev.Report;
-
 public class FinderTest extends TestCase {
 
 	private File workspace;
@@ -24,152 +21,83 @@ public class FinderTest extends TestCase {
 	}
 	
 	@Test
-	public void testFindSimpleStringInJavaFiles() throws FileNotFoundException {
+	public void testFindPhoneInJavaFiles() {
 		String[] includes = {"**/*.java"};
-		String regexp = "consolided";
+		String[] words = {"phone"};
 		
-		Finder finder = new Finder(workspace, includes, null, regexp);
+		Finder finder = new Finder(workspace, includes, null, words);
 		finder.setBuildResult("success");
-		
 		finder.findText();
-		assertEquals(Result.SUCCESS, finder.buildResult);
-		
-		List<Report> reports = finder.reports;
-		assertEquals(3, reports.size());
-		
-		assertEquals("Charts.java", reports.get(0).getFileName());
-		assertEquals("Dashboard.java", reports.get(1).getFileName());
-		assertEquals("ExtractionHelper.java", reports.get(2).getFileName());
-	}
-	
-	@Test
-	public void testFindTestInApplicationConf() throws FileNotFoundException {
-		String[] includes = {"**/application.conf"};
-		String regexp = "test";
-		
-		Finder finder = new Finder(workspace, includes, null, regexp);
-		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput = false;
-		finder.findText();
-		
-		assertEquals(Result.UNSTABLE, finder.buildResult);
-		
-		List<Report> reports = finder.reports;
-		assertEquals(1, reports.size());
-		
-		Report report = reports.get(0);
-		assertEquals(5, report.getLines().size());
-		assertEquals("application.conf", report.getFileName());
 
-		List<String> lines = report.getLines();
-		assertEquals("%test.db.url=jdbc:h2:file:/tmp/sample-app.db;DB_CLOSE_DELAY=-1;MVCC=TRUE", lines.get(0));
-		assertEquals("%test.db.driver=org.h2.Driver", lines.get(1));
-		assertEquals("%test.db.user=sa", lines.get(2));
-		assertEquals("%test.db.pass=", lines.get(3));
-		assertEquals("%test.jpa.dialect=org.hibernate.dialect.H2Dialect", lines.get(4));
-		
+		List<Report> reports = finder.reports;
+
+		assertEquals(2, reports.size());
+		assertEquals(Result.SUCCESS, finder.buildResult);
+		assertEquals("Dashboard.java", reports.get(0).getFileName());
+		assertEquals("Customer.java", reports.get(1).getFileName());
 	}
 	
 	@Test
-	public void testFindRegexUsingOrInOneFile() throws FileNotFoundException {
-		String[] includes = {"**/application.conf"};
-		String regexp = "ddl=update|test.jpa";
-		
-		Finder finder = new Finder(workspace, includes, null, regexp);
-		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput = false;
-		finder.findText();
-		
-		assertEquals(Result.UNSTABLE, finder.buildResult);
-		
-		Report report = finder.reports.get(0);
-		
-		List<String> lines = report.getLines();
-		assertEquals("%prod.jpa.ddl=update", lines.get(0));
-		assertEquals("%test.jpa.dialect=org.hibernate.dialect.H2Dialect", lines.get(1));
-	}
+    public void testFindPhoneInAllFiles() {
+        String[] includes = {"**/*"};
+        String[] words = {"phone"};
+        
+        Finder finder = new Finder(workspace, includes, null, words);
+        finder.findText();
+        
+        List<Report> reports = finder.reports;
+        
+        assertEquals(5, reports.size());
+        assertEquals("Dashboard.java", reports.get(0).getFileName());
+        assertEquals("Customer.java", reports.get(1).getFileName());
+        assertEquals("phone.html", reports.get(2).getFileName());
+        assertEquals("main.html", reports.get(3).getFileName());
+        assertEquals("messages", reports.get(4).getFileName());
+    }
 	
 	@Test
-	public void testFindRegexUsingOrInTwoFiles() throws FileNotFoundException {
-		String[] includes = {"**/application.conf", "**/messages"};
-		String regexp = ".*(H2Dialect|app).*";
-		
-		Finder finder = new Finder(workspace, includes, null, regexp);
-		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput = false;
-		finder.findText();
-		
-		assertEquals(2, finder.reports.size());
-		
-		List<String> applicationConfLines = finder.reports.get(0).getLines();
-		assertEquals("application.name=dashboard", applicationConfLines.get(0));
-		assertEquals("application.mode=dev", applicationConfLines.get(1));
-		assertEquals("%prod.application.mode=prod", applicationConfLines.get(2));
-		assertEquals("application.secret=dNTNhN5fQaqIYm8wggyujJx0vQVjtVSxrs45iJjvKQPOQlLBR7aWs8ZwnIpktjB6", applicationConfLines.get(3));
-		
-		List<String> messagesLines = finder.reports.get(1).getLines();
-		assertEquals("title=Simple app sample for test with H2Dialect", messagesLines.get(0));
-	}
+    public void testFindPhoneCaseSensitiveInAllFiles() {
+        String[] includes = {"**/*"};
+        String[] words = {"Phone"};
+        
+        Finder finder = new Finder(workspace, includes, null, words);
+        finder.caseSensitive = true;
+        
+        finder.findText();
+        
+        List<Report> reports = finder.reports;
+        
+        assertEquals(2, reports.size());
+        assertEquals("phone.html", reports.get(0).getFileName());
+        assertEquals("main.html", reports.get(1).getFileName());
+    }
 	
 	@Test
-	public void testFindTwoWordsInTwoFilesFromLeftToRight() throws FileNotFoundException {
-		String[] includes = {"**/application.conf", "**/messages"};
-		String regexp = ".*(app).*(H2Dialect).*";
-		
-		Finder finder = new Finder(workspace, includes, null, regexp);
-		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput = false;
-		finder.findText();
-		
-		assertEquals(1, finder.reports.size());
-		
-		List<String> messagesLines = finder.reports.get(0).getLines();
-		assertEquals("title=Simple app sample for test with H2Dialect", messagesLines.get(0));
-	}
+    public void testTryToBlankString() {
+        String[] includes = {"**/*"};
+        String[] words = {""};
+        
+        Finder finder = new Finder(workspace, includes, null, words);
+        
+        List<Report> reports = finder.findText().reports;
+        assertEquals(0, reports.size());
+        
+        String[] spaces = {" ", " "};
+        Finder otherFinder = new Finder(workspace, includes, null, spaces);
+        
+        reports = otherFinder.findText().reports;
+        assertEquals(0, reports.size());
+    }
 	
 	@Test
-	public void testFindRegexUsingAndInTwoFilesInAnyOrder() throws FileNotFoundException {
-		String[] includes = {"**/application.conf", "**/messages"};
-		String regexp = "(.*(H2Dialect).*(app).*)|(.*(app).*(H2Dialect).*)";
-		
-		Finder finder = new Finder(workspace, includes, null, regexp);
-		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput = false;
-		finder.findText();
-		
-		assertEquals(1, finder.reports.size());
-		
-		List<String> messagesLines = finder.reports.get(0).getLines();
-		assertEquals("title=Simple app sample for test with H2Dialect", messagesLines.get(0));
-	}
-	
-	@Test
-	public void testFindRegexUsingExcludes() throws FileNotFoundException {
-		String[] includes = {"**/messages", "**/application.conf"};
-		String[] excludes = {"**/application.conf"};
-		String regexp = ".*(H2Dialect|app).*";
-		
-		Finder finder = new Finder(workspace, includes, excludes, regexp);
-		finder.setBuildResult("unstable");
-		finder.checkOnlyConsoleOutput = false;
-		finder.findText();
-		
-		assertEquals(1, finder.reports.size());
-		
-		List<String> messagesLines = finder.reports.get(0).getLines();
-		assertEquals("title=Simple app sample for test with H2Dialect", messagesLines.get(0));
-	}
-	
-	@Test
-	public void testTryToFindSimpleStringButNotFoundFile() throws FileNotFoundException {
+	public void testTryToFindSimpleStringButNotFoundFile() {
 		String[] includes = {"**/*.swp"};
-		String regexp = "consolided";
+		String[] words = {"consolided"};
 		
-		Finder finder = new Finder(workspace, includes, null, regexp);
+		Finder finder = new Finder(workspace, includes, null, words);
 		
 		List<Report> reports = finder.findText().reports;
 		assertEquals(0, reports.size());
 	}
-	
 	
 }

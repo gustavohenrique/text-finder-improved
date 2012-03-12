@@ -41,19 +41,18 @@
             <div id="header">
                 <div class="hdrl"></div>
                 <div class="hdrr"></div>
-                
                 <h1><a href="/dashboard">IPS</a></h1>
-                
-                <ul id="nav">
-                    <li #{if title == 'Indicadores'}class="active"#{/}>#{a @Dashboard.index() }Indicadores#{/a}</li>
-                    <li #{if title == 'Charts'}class="active"#{/}>#{a @Charts.index() }Gr&aacute;ficos#{/a}</li>
-                </ul>
-                #{get 'combobox' /}
 
             </div> <!-- #header ends -->
-            
             #{doLayout /}
-            
+            <!-- show telephones here -->
+            <div>Telephone1: 123456<br>
+                 Phone: 333333<br>
+                 Mobile: 9999999
+            </div> 
+            <!-- procell
+                 automobile
+            -->
         </div> <!-- wrapper ends -->
         
     </div> <!-- #hld ends -->

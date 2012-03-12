@@ -2,16 +2,13 @@ package br.com.wdev.plugins;
 
 import static hudson.Util.fixEmpty;
 import hudson.Extension;
-import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Computer;
 import hudson.remoting.VirtualChannel;
-import hudson.slaves.SlaveComputer;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -21,7 +18,6 @@ import hudson.util.FormValidation;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -43,7 +39,7 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
 
     public final String excludes;
 	
-    public final String regexp;
+    public final String words;
 	
     public final boolean caseSensitive;
 	
@@ -53,10 +49,10 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
 
     
 	@DataBoundConstructor
-    public TextFinderImprovedPublisher(String includes, String excludes, String regexp, boolean caseSensitive, String buildResult, boolean checkOnlyConsoleOutput) {
+    public TextFinderImprovedPublisher(String includes, String excludes, String words, boolean caseSensitive, String buildResult, boolean checkOnlyConsoleOutput) {
         this.includes = Util.fixNull(includes);
         this.excludes = Util.fixNull(excludes);
-        this.regexp = Util.fixNull(regexp);
+        this.words = Util.fixNull(words);
         this.caseSensitive = caseSensitive;
         this.buildResult = buildResult;
         this.checkOnlyConsoleOutput = checkOnlyConsoleOutput;
@@ -73,9 +69,9 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
     		
     		public Boolean invoke(File workspace, VirtualChannel channel) throws IOException {
                 
-                final String SPLIT_SEPARATOR = " ";
+                final String SPLIT_SEPARATOR = ",";
                 
-                Finder finder = new Finder(workspace, includes.split(SPLIT_SEPARATOR), excludes.split(SPLIT_SEPARATOR), regexp);
+                Finder finder = new Finder(workspace, includes.split(SPLIT_SEPARATOR), excludes.split(SPLIT_SEPARATOR), words.split(SPLIT_SEPARATOR));
                 finder.setBuildResult(buildResult);
                 finder.buildNumber = build.getNumber();
         		finder.checkOnlyConsoleOutput = checkOnlyConsoleOutput;
@@ -111,7 +107,7 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
 
         @Override
         public String getHelpFile() {
-            return "/plugin/text-finder/help.html";
+            return "/plugin/text-finder-improved/help.html";
         }
 
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
