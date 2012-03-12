@@ -2,6 +2,7 @@ package br.com.wdev.plugins;
 
 import hudson.model.AbstractProject;
 
+import java.util.Collections;
 import java.util.List;
 
 import br.com.wdev.Finder;
@@ -16,6 +17,7 @@ public class FinderProjectAction extends FinderAction {
         super(null, null);
         this.project = project;
         this.finders = finders;
+        Collections.reverse(this.finders);
     }
 
 }
