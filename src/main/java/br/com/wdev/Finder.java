@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +30,8 @@ public class Finder implements Serializable {
 	
 	public String[] words;
 	
+	public String regexp;
+	
 	public boolean checkOnlyConsoleOutput;
 	
 	public boolean caseSensitive;
@@ -38,11 +43,8 @@ public class Finder implements Serializable {
 	public List<Report> reports;
 
 	
-	public Finder(File workspace, String[] includes, String[] excludes, String[] words) {
+	public Finder(File workspace) {
 		this.workspace = workspace;
-		this.includes = includes;
-		this.excludes = excludes;
-        this.words = words;
         this.buildResult = Result.SUCCESS;
         this.checkOnlyConsoleOutput = false;
         
@@ -50,28 +52,42 @@ public class Finder implements Serializable {
 	}
 	
 	public Finder findText() {
-	    if (isNotBlank(words)) {
-    		try {
-    			DirectoryScanner ds = getDirectoryScanner(workspace, includes, excludes);
-    			ds.scan();
-                
-            	for (String includedFile : ds.getIncludedFiles()) {
-            		Report report = findPatterInFile(words, new File(workspace, includedFile));
-            		if (report != null) reports.add(report);
-                }
-    
-            }
-    		catch (Exception e) {
-    			log(e.getMessage());
-            	buildResult = Result.UNSTABLE;
+	    boolean hasWords = isNotBlank(words);
+	    boolean hasRegexp = isValid(regexp);
+	    
+	    if ( hasWords || hasRegexp ) {
+        	for (String includedFile : getFoundFiles()) {
+        	    Report report = hasWords ? find(includedFile, "words") : find(includedFile, "regex");
+        		if (report != null) reports.add(report);
             }
 	    }
 		
 		return this;
 	}
 	
+	private boolean isValid(String regexp) {
+        try {
+            Pattern.compile(regexp);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    private String[] getFoundFiles() {
+	    try {
+            DirectoryScanner ds = getDirectoryScanner(workspace, includes, excludes);
+            ds.scan();
+            return ds.getIncludedFiles();
+        }
+        catch (Exception e) {
+            return new String[] {};
+        }
+	}
+	
 	private boolean isNotBlank(String[] words) {
-        if (words.length > 0) {
+        if (words != null) {
             for (int i=0; i<words.length; i++) {
                 if (StringUtils.isNotBlank(words[i])) {
                     return true;
@@ -95,14 +111,44 @@ public class Finder implements Serializable {
 		}
 		return ds;
 	}
-
-	private Report findPatterInFile(String[] words, File file) throws IOException {
-		Report report = null;
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line;
+    
+    private Report find(String includedFile, String method) {
+        try {
+            File file = new File(workspace, includedFile);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
             
+            Report report = "regex".equals(method) ? findRegexInFile(reader, includedFile) : findWordsInFile(reader, includedFile); 
+            
+            IOUtils.closeQuietly(reader);
+            return report;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+    
+    private Report findRegexInFile(BufferedReader reader, String includedFile) throws IOException {
         List<String> lines = new ArrayList<String>();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            Pattern pattern = Pattern.compile(regexp);
+            Matcher matcher = pattern.matcher(line);
             
+            if (matcher.find()) {
+                lines.add(line);
+                if (checkOnlyConsoleOutput) break;
+            }
+        }
+        
+        if (lines.size() > 0) {
+            return new Report(includedFile, lines);
+        }
+        return null;
+    }
+
+	private Report findWordsInFile(BufferedReader reader, String includedFile) throws IOException {
+	    List<String> lines = new ArrayList<String>();
+	    String line;
         while ((line = reader.readLine()) != null) {
             for (String word : words) {
                 
@@ -121,11 +167,10 @@ public class Finder implements Serializable {
         }
         
         if (lines.size() > 0) {
-        	report = new Report(file.getName(), lines);
+        	return new Report(includedFile, lines);
         }
             
-        IOUtils.closeQuietly(reader);
-		return report;
+        return null;
     }
 
     public void setBuildResult(String result) {
@@ -136,11 +181,5 @@ public class Finder implements Serializable {
         	this.buildResult = Result.UNSTABLE;
         }
     }
-    
-    private void log(String message) {
-//    	logger.println("Text Finder Improved: " + message);
-    	System.out.println("Text Finder Improved: " + message);
-    }
-  
 	
 }

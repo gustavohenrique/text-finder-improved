@@ -15,7 +15,8 @@
          
             <table class="sortable pane bigtable">
                 <thead>
-                  <th>Palavras</th>
+                  <th>Lista de Palavras</th>
+                  <th>Expressão Regular</th>
                   <th>Arquivos incluidos</th>
                   <th>Arquivos excluidos</th>
                   <th width="30">Case Sensitive?</th>
@@ -28,6 +29,8 @@
                          ${word}   
                         </j:forEach>
                     </td>
+                    
+                    <td>${it.finder.regexp}</td>
                     
                     <td>
                         <j:forEach items="${it.finder.includes}" var="include">

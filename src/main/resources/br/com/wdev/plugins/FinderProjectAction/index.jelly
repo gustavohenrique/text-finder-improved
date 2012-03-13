@@ -19,6 +19,7 @@
          
             <table class="sortable pane bigtable">
                 <thead>
+                  <th>Lista de Palavras</th>
                   <th>Expressão Regular</th>
                   <th>Arquivos incluidos</th>
                   <th>Arquivos excluidos</th>
@@ -27,6 +28,12 @@
                 </thead>
                 <tbody>
                   <tr>
+                     <td>
+                        <j:forEach items="${finder.words}" var="word">
+                         ${word}   
+                        </j:forEach>
+                    </td>
+                    
                     <td>${finder.regexp}</td>
                     
                     <td>

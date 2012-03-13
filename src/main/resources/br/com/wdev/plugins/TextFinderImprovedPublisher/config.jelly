@@ -12,15 +12,20 @@
         <f:textbox field="words" />
     </f:entry>
     
-    <f:entry title="Case Sensitive">
-        <f:checkbox type="checkbox" name="caseSensitive" checked="${instance.caseSensitive}"/>
+    <f:entry title="Expressão Regular" description="Ex.: .*(fone|celular).*">
+        <f:textbox field="regexp" />
     </f:entry>
-
+    
     <f:entry title="Se houver resultado, marcar o build como:">
         <select name="buildResult">
             <f:option value="success" selected='${instance.buildResult=="success"}'>Sucesso</f:option>
             <f:option value="unstable" selected='${instance.buildResult=="unstable"}'>Instável</f:option>
         </select>
+    </f:entry>
+    
+    <f:entry title="">
+        <f:checkbox type="checkbox" name="caseSensitive" checked="${instance.caseSensitive}"/>
+        <label class="attach-previous">Case Sensitive</label>
     </f:entry>
     
     <f:entry title="">

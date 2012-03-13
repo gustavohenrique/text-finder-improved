@@ -40,6 +40,8 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
     public final String excludes;
 	
     public final String words;
+    
+    public final String regexp;
 	
     public final boolean caseSensitive;
 	
@@ -49,10 +51,11 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
 
     
 	@DataBoundConstructor
-    public TextFinderImprovedPublisher(String includes, String excludes, String words, boolean caseSensitive, String buildResult, boolean checkOnlyConsoleOutput) {
+    public TextFinderImprovedPublisher(String includes, String excludes, String words, String regexp, boolean caseSensitive, String buildResult, boolean checkOnlyConsoleOutput) {
         this.includes = Util.fixNull(includes);
         this.excludes = Util.fixNull(excludes);
         this.words = Util.fixNull(words);
+        this.regexp = Util.fixNull(regexp);
         this.caseSensitive = caseSensitive;
         this.buildResult = buildResult;
         this.checkOnlyConsoleOutput = checkOnlyConsoleOutput;
@@ -71,7 +74,11 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
                 
                 final String SPLIT_SEPARATOR = ",";
                 
-                Finder finder = new Finder(workspace, includes.split(SPLIT_SEPARATOR), excludes.split(SPLIT_SEPARATOR), words.split(SPLIT_SEPARATOR));
+                Finder finder = new Finder(workspace);
+                finder.includes = includes.split(SPLIT_SEPARATOR);
+                finder.excludes = excludes.split(SPLIT_SEPARATOR);
+                finder.words = words.split(SPLIT_SEPARATOR);
+                finder.regexp = regexp;
                 finder.setBuildResult(buildResult);
                 finder.buildNumber = build.getNumber();
         		finder.checkOnlyConsoleOutput = checkOnlyConsoleOutput;

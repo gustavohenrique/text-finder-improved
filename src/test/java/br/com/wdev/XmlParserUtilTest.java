@@ -38,7 +38,11 @@ public class XmlParserUtilTest extends TestCase {
                     		"    <excludes>" +
                     		"      <string>**/application.conf</string>" +
                     		"    </excludes>" +
-                    		"    <regexp>phone</regexp>" +
+                    		"    <words>" +
+                    	    "      <string>phone</string>" +
+                    	    "      <string>cel</string>" +
+                    	    "    </words>" +
+                    		"    <regexp>telefone|tel[; ]|celular|cel[; ]|fone[; ]</regexp>" +
                     		"    <checkOnlyConsoleOutput>false</checkOnlyConsoleOutput>" +
                     		"    <caseSensitive>false</caseSensitive>" +
                     		"    <buildResult>" +
@@ -80,6 +84,9 @@ public class XmlParserUtilTest extends TestCase {
         List<Finder> finders = xmlParserUtil.fromXml(xml);
         
         assertEquals(1, finders.size());
+        
+        Finder finder = finders.get(0);
+        assertEquals("telefone|tel[; ]|celular|cel[; ]|fone[; ]", finder.regexp);
 	}
 	
 	
@@ -112,8 +119,13 @@ public class XmlParserUtilTest extends TestCase {
 		
 		String[] includes = {"**/*.java"};
 		String[] excludes = {"**/application.conf"};
-		String[] searchString = {"phone"};
-		Finder finder = new Finder(null, includes, excludes, searchString);
+		String[] words = {"phone", "cel"};
+		
+		Finder finder = new Finder(null);
+		finder.includes = includes;
+		finder.excludes = excludes;
+		finder.words = words;
+		finder.regexp = "telefone|tel[; ]|celular|cel[; ]|fone[; ]";
 		finder.reports = reports;
 		finder.buildNumber = 10;
         return finder;
