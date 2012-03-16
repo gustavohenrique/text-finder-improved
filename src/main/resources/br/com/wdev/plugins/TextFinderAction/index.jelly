@@ -32,7 +32,7 @@
         <l:main-panel>
             <h1><j:out value="${it.displayName}"/></h1>
             
-            <div class="report_title">Criteria</div>
+            <div class="report_title">Critério de Busca</div>
             <ul class="treeview">
                 <li>Word List: <j:forEach items="${it.finder.words}" var="word">${word}</j:forEach></li>
                 <li>Regex: ${it.finder.regexp}</li>
@@ -42,7 +42,7 @@
                 <li class="last">Console Output?: ${it.finder.checkOnlyConsoleOutput}</li>
             </ul>
             
-            <div class="report_title">Found</div>
+            <div class="report_title">Resultado da Busca (${it.finder.reports.size()})</div>
             <ul class="filetree treeview">
             
                 <j:set var="clsReport" value=""/>
@@ -59,13 +59,13 @@
                         
                         <div id="${indexFile}" onclick="treeview(this)" class="hitarea closed-hitarea expandable-hitarea ${clsReport}"></div>
                         
-                        <span class="file">${report.fileName}</span>
+                        <span class="file">${report.fileName} (${report.lines.size()})</span>
                         <ul id="ul_${indexFile}" style="display:none">
                             <j:forEach items="${report.lines}" var="line" varStatus="status" indexVar="indexLine">
                                 <j:if test="${status.last}">
                                     <j:set var="cls" value="last"/>
                                 </j:if>
-                                <li class="${cls}">${line}</li>
+                                <li class="${cls}"><pre lang="sh_java">${line}</pre></li>
                             </j:forEach>
                         </ul>
                     </li>
