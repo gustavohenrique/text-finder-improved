@@ -1,67 +1,76 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
     <l:layout norefresh="true">
+    
+        <l:header>
+           <link rel="Stylesheet" href="${rootURL}/plugin/text-finder-improved/css/treeview.css" type="text/css"/>
+           <style type="text/css">
+               .report_title { border-bottom:1px dotted gray; font-size:10pt; margin-top:10px }
+           </style>
+           <script type="text/javascript">
+             function treeview(element) {
+                 var ul = $('ul_'+element.id);
+                 if (ul.visible()) {
+                     ul.hide();
+                     element.addClassName('closed-hitarea');
+                     element.addClassName('expandable-hitarea');
+                     element.removeClassName('collapsable-hitarea');
+                 }
+                 else {
+                     ul.show();
+                     element.removeClassName('closed-hitarea');
+                     element.removeClassName('expandable-hitarea');
+                     element.addClassName('collapsable-hitarea');                     
+                 }
+             }
+           </script>
+        </l:header>
+    
         <l:side-panel>
           <st:include it="${it.build}" page="sidepanel.jelly" />
         </l:side-panel>
         
         <l:main-panel>
-            <table style="padding-top:20px;">
-              <tbody>
-                <tr>
-                  <td><h1><j:out value="${it.displayName}"/></h1></td>
-                </tr>
-              </tbody>
-            </table>
-         
-            <table class="sortable pane bigtable" border="1">
-                <thead>
-                  <th>Lista de Palavras</th>
-                  <th>Expressão Regular</th>
-                  <th>Arquivos incluidos</th>
-                  <th>Arquivos excluidos</th>
-                  <th width="30">Case Sensitive?</th>
-                  <th width="30">Apenas no Console Output?</th>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                        <j:forEach items="${it.finder.words}" var="word">
-                         ${word}   
-                        </j:forEach>
-                    </td>
-                    
-                    <td>${it.finder.regexp}</td>
-                    
-                    <td>
-                        <j:forEach items="${it.finder.includes}" var="include">
-                         ${include}   
-                        </j:forEach>
-                    </td>
-                    
-                    <td>
-                        <j:forEach items="${it.finder.excludes}" var="exclude">
-                         ${exclude}   
-                        </j:forEach>
-                    </td>
-                    
-                    <td>${it.finder.caseSensitive}</td>
-                    <td>${it.finder.checkOnlyConsoleOutput}</td>
-                  </tr>
-                </tbody>
-            </table>
+            <h1><j:out value="${it.displayName}"/></h1>
             
-            <j:forEach items="${it.finder.reports}" var="report">
-              <table style="text-align:left;padding-top:10px;">
-                <thead>
-                  <th>${report.fileName}</th>
-                </thead>
-                <tbody><tr><td>
-                     <j:forEach items="${report.lines}" var="line">
-                       ${line}<br/>
-                     </j:forEach>
-                </td></tr></tbody>
-              </table>
-            </j:forEach>
+            <div class="report_title">Criteria</div>
+            <ul class="treeview">
+                <li>Word List: <j:forEach items="${it.finder.words}" var="word">${word}</j:forEach></li>
+                <li>Regex: ${it.finder.regexp}</li>
+                <li>Includes: <j:forEach items="${it.finder.includes}" var="include">${include}</j:forEach></li>
+                <li>Excludes: <j:forEach items="${it.finder.excludes}" var="exclude">${exclude}</j:forEach></li>
+                <li>Case Sensitive?: ${it.finder.caseSensitive}</li>
+                <li class="last">Console Output?: ${it.finder.checkOnlyConsoleOutput}</li>
+            </ul>
+            
+            <div class="report_title">Found</div>
+            <ul class="filetree treeview">
+            
+                <j:set var="clsReport" value=""/>
+                <j:set var="clsLi" value="closed expandable"/>
+                
+                <j:forEach items="${it.finder.reports}" var="report" indexVar="indexFile" varStatus="statusReport">
+                    <j:if test="${statusReport.last}">
+                        <j:set var="clsReport" value="lastExpandable-hitarea"/>
+                        <j:set var="clsLi" value="closed expandable lastExpandable"/>
+                    </j:if>
+                
+                    <j:set var="cls" value=""/>
+                    <li class="${clsLi}">
+                        
+                        <div id="${indexFile}" onclick="treeview(this)" class="hitarea closed-hitarea expandable-hitarea ${clsReport}"></div>
+                        
+                        <span class="file">${report.fileName}</span>
+                        <ul id="ul_${indexFile}" style="display:none">
+                            <j:forEach items="${report.lines}" var="line" varStatus="status" indexVar="indexLine">
+                                <j:if test="${status.last}">
+                                    <j:set var="cls" value="last"/>
+                                </j:if>
+                                <li class="${cls}">${line}</li>
+                            </j:forEach>
+                        </ul>
+                    </li>
+                </j:forEach>
+            </ul>
 
         </l:main-panel>
     </l:layout>
