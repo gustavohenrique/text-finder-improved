@@ -13,7 +13,7 @@
               </tbody>
             </table>
          
-            <table class="sortable pane bigtable">
+            <table class="sortable pane bigtable" border="1">
                 <thead>
                   <th>Lista de Palavras</th>
                   <th>Expressão Regular</th>

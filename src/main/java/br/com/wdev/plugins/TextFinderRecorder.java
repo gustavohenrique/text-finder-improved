@@ -31,7 +31,7 @@ import br.com.wdev.Constants;
 import br.com.wdev.Finder;
 import br.com.wdev.XmlParserUtil;
 
-public class TextFinderImprovedPublisher extends Recorder implements Serializable {
+public class TextFinderRecorder extends Recorder implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -51,7 +51,7 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
 
     
 	@DataBoundConstructor
-    public TextFinderImprovedPublisher(String includes, String excludes, String words, String regexp, boolean caseSensitive, String buildResult, boolean checkOnlyConsoleOutput) {
+    public TextFinderRecorder(String includes, String excludes, String words, String regexp, boolean caseSensitive, String buildResult, boolean checkOnlyConsoleOutput) {
         this.includes = Util.fixNull(includes);
         this.excludes = Util.fixNull(excludes);
         this.words = Util.fixNull(words);
@@ -86,21 +86,27 @@ public class TextFinderImprovedPublisher extends Recorder implements Serializabl
         		
         		finder.findText();
         		
-        		File projectDir = getProjectDir(build);
-        		List<Finder> finders = xmlParserUtil.fromXml(projectDir);
-        		finders.add(finder);
-        		xmlParserUtil.toXml(finders, projectDir);
+        		//saveFinderInExternalXml(build, finder);
         		
-        		build.getActions().add(new FinderAction(build, finder));
+        		build.getActions().add(new TextFinderAction(build, finder));
         		build.setResult(finder.buildResult);
         		
         		return finder.reports.size() > 0;
     		}
 
+    		/*
+            private void saveFinderInExternalXml(final AbstractBuild<?, ?> build, Finder finder) {
+                File projectDir = getProjectDir(build);
+        		List<Finder> finders = xmlParserUtil.fromXml(projectDir);
+        		finders.add(finder);
+        		xmlParserUtil.toXml(finders, projectDir);
+            }
+
             private File getProjectDir(final AbstractBuild<?, ?> build) {
                 File projectDir = build.getProject().getRootDir();
                 return new File(projectDir.getAbsolutePath() + Constants.OUTPUT_XML_FILENAME);
             }
+            */
     	});
     	
         return true;

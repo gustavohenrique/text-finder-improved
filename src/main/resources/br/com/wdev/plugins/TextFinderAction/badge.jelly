@@ -1,0 +1,6 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <a href="${it.buildUrl}">
+        <img src="${it.iconFileName}" width="16" height="16" title="Text Finder Report"/>
+    </a>
+    
+</j:jelly>
