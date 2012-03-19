@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
@@ -51,22 +53,28 @@ public class XmlParserUtilTest extends TestCase {
                     		"      <color>BLUE</color>" +
                     		"    </buildResult>" +
                     		"    <buildNumber>10</buildNumber>" +
-                    		"    <reports>" +
-                    		"      <br.com.wdev.Report>" +
-                    		"        <fileName>file1</fileName>" +
-                    		"        <lines>" +
-                    		"          <string>line1</string>" +
-                    		"          <string>line2</string>" +
-                    		"          <string>line3</string>" +
-                    		"        </lines>" +
-                    		"      </br.com.wdev.Report>" +
-                    		"      <br.com.wdev.Report>" +
-                    		"        <fileName>file2</fileName>" +
-                    		"        <lines>" +
-                    		"          <string>line4</string>" +
-                    		"          <string>line5</string>" +
-                    		"        </lines>" +
-                    		"      </br.com.wdev.Report>" +
+                    		"    <reports class=\"tree-map\">" +
+                    		"      <no-comparator/>" +
+                    		"      <entry>" +
+                    		"        <string>java</string>" +
+                    		"        <root>" +         
+                    		"          <br.com.wdev.Report>" +
+                    		"            <fileName>file1</fileName>" +
+                    		"            <lines>" +
+                    		"              <string>line1</string>" +
+                    		"              <string>line2</string>" +
+                    		"              <string>line3</string>" +
+                    		"            </lines>" +
+                    		"          </br.com.wdev.Report>" +
+                    		"          <br.com.wdev.Report>" +
+                    		"            <fileName>file2</fileName>" +
+                    		"            <lines>" +
+                    		"              <string>line4</string>" +
+                    		"              <string>line5</string>" +
+                    		"            </lines>" +
+                    		"          </br.com.wdev.Report>" +
+                    		"        </root>" +
+                    		"      </entry>" +
                     		"    </reports>" +
                     		"  </br.com.wdev.Finder>" +
                     		"</root>";
@@ -113,9 +121,12 @@ public class XmlParserUtilTest extends TestCase {
 		lines2.add("line4");
 		lines2.add("line5");
 		
-		List<Report> reports = new ArrayList<Report>();
-		reports.add(new Report("file1", lines1));
-		reports.add(new Report("file2", lines2));
+		List<Report> reportList = new ArrayList<Report>();
+		reportList.add(new Report("file1", lines1));
+		reportList.add(new Report("file2", lines2));
+		
+		Map<String, List<Report>>reports = new TreeMap<String, List<Report>>();
+		reports.put("java", reportList);
 		
 		String[] includes = {"**/*.java"};
 		String[] excludes = {"**/application.conf"};

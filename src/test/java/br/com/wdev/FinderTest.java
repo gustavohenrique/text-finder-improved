@@ -4,6 +4,7 @@ import hudson.model.Result;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -21,6 +22,22 @@ public class FinderTest extends TestCase {
 	}
 	
 	@Test
+	public void testReport() {
+	    String[] includes = {"**/*.java", "**/*.xml", "**/*.properties", "messages"};
+	    String[] words = {"phone"};
+	    
+	    finder.includes = includes;
+        finder.words = words;
+        finder.findText();
+
+        Map<String, List<Report>> reports = finder.reports;
+        assertTrue(reports.containsKey("java"));
+        assertTrue(reports.containsKey("xml"));
+        assertTrue(reports.containsKey("properties"));
+        assertTrue(reports.containsKey("other"));
+	}
+	
+	@Test
 	public void testFindPhoneInJavaFiles() {
 		String[] includes = {"**/*.java"};
 		String[] words = {"phone"};
@@ -30,7 +47,7 @@ public class FinderTest extends TestCase {
 		finder.setBuildResult("success");
 		finder.findText();
 
-		List<Report> reports = finder.reports;
+		List<Report> reports = finder.reports.get("java");
 
 		assertEquals(2, reports.size());
 		assertEquals(Result.SUCCESS, finder.buildResult);
@@ -47,7 +64,7 @@ public class FinderTest extends TestCase {
         finder.words = words;
         finder.findText();
         
-        List<Report> reports = finder.reports;
+        List<Report> reports = finder.reports.get("other");
         
         assertEquals(5, reports.size());
         assertEquals("app/controllers/Dashboard.java", reports.get(0).getFileName());
@@ -68,7 +85,7 @@ public class FinderTest extends TestCase {
         
         finder.findText();
         
-        List<Report> reports = finder.reports;
+        List<Report> reports = finder.reports.get("other");
         
         assertEquals(2, reports.size());
         assertEquals("app/views/errors/phone.html", reports.get(0).getFileName());
@@ -83,7 +100,7 @@ public class FinderTest extends TestCase {
         finder.includes = includes;
         finder.words = words;
         
-        List<Report> reports = finder.findText().reports;
+        Map<String, List<Report>> reports = finder.findText().reports;
         assertEquals(0, reports.size());
         
         String[] spaces = {" ", " "};
@@ -101,7 +118,7 @@ public class FinderTest extends TestCase {
 		finder.includes = includes;
 		finder.words = words;
 		
-		List<Report> reports = finder.findText().reports;
+		List<Report> reports = finder.findText().reports.get("swp");
 		assertEquals(0, reports.size());
 	}
 	
@@ -114,7 +131,7 @@ public class FinderTest extends TestCase {
         finder.regexp = regexp;
         finder.findText();
         
-        List<Report> reports = finder.reports;
+        List<Report> reports = finder.reports.get("html");
         
         assertEquals(2, reports.size());
         assertEquals("app/views/errors/phone.html", reports.get(0).getFileName());
@@ -130,7 +147,7 @@ public class FinderTest extends TestCase {
         finder.regexp = regexp;
         finder.findText();
         
-        List<Report> reports = finder.reports;
+        List<Report> reports = finder.reports.get("other");
         
         assertEquals(4, reports.size());
         assertEquals("app/controllers/Dashboard.java", reports.get(0).getFileName());

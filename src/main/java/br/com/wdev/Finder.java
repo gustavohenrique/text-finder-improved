@@ -9,9 +9,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +22,8 @@ import org.apache.tools.ant.DirectoryScanner;
 public class Finder implements Serializable {
 	
     private static final long serialVersionUID = 1227802849153892243L;
+
+    private static final String OTHER = "other";
 
     private File workspace;
 
@@ -40,32 +43,55 @@ public class Finder implements Serializable {
 	
 	public int buildNumber;
 	
-	public List<Report> reports;
+	public Map<String, List<Report>> reports;
 
 	
 	public Finder(File workspace) {
 		this.workspace = workspace;
         this.buildResult = Result.SUCCESS;
         this.checkOnlyConsoleOutput = false;
-        
-        this.reports = new ArrayList<Report>();
+        this.reports = new TreeMap<String, List<Report>>();
 	}
 	
-	public Finder findText() {
+    public Finder findText() {
 	    boolean hasWords = isNotBlank(words);
 	    boolean hasRegexp = isValid(regexp);
 	    
 	    if ( hasWords || hasRegexp ) {
+	        initReports();
+	        
+	        List<Report> reportList = null;
         	for (String includedFile : getFoundFiles()) {
+        	    String filetype = getFiletype(includedFile);
+        	    
+        	    reportList = getReportListBy(filetype);
+        	    
         	    Report report = hasWords ? find(includedFile, "words") : find(includedFile, "regex");
-        		if (report != null) reports.add(report);
+        		if (report != null) reportList.add(report);
             }
 	    }
 		
 		return this;
 	}
+    
+    private void initReports() {
+        for (String include : includes) {
+            String filetype = getFiletype(include);
+            reports.put(filetype, new ArrayList<Report>());
+        }
+        reports.put(OTHER, new ArrayList<Report>());
+    }
 	
-	private boolean isValid(String regexp) {
+	private List<Report> getReportListBy(String filetype) {
+        return (reports.containsKey(filetype)) ? reports.get(filetype) : reports.get(OTHER);
+    }
+
+    private String getFiletype(String includedFile) {
+	    String[] splited = includedFile.split("\\.");
+	    return (splited.length > 1) ? splited[splited.length - 1] : OTHER; 
+    }
+
+    private boolean isValid(String regexp) {
         try {
             Pattern.compile(regexp);
             return true;

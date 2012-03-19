@@ -4,19 +4,35 @@
         <l:header>
            <link rel="Stylesheet" href="${rootURL}/plugin/text-finder-improved/css/treeview.css" type="text/css"/>
            <style type="text/css">
-               .report_title { border-bottom:1px dotted gray; font-size:10pt; margin-top:10px }
+               ul.report { list-style: none; margin:0; padding:10px; line-height:15px }
+               .report_title { background-color:#d8d8d8; padding:4px; font-size:11pt; margin-top:10px }
+               .filetype { font-size:10pt; margin-top:10px; font-weight:bold }
            </style>
            <script type="text/javascript">
+             function _toggleClass(element, c1, c2) {
+                 if (element.hasClassName(c1)) {
+                     element.removeClassName(c1);
+                     element.addClassName(c2);
+                 }
+                 
+             }
+             
              function treeview(element) {
-                 var ul = $('ul_'+element.id);
-                 if (ul.visible()) {
-                     ul.hide();
+                 var li_parent = $('li_'+element.id), 
+                     ul_child = $('ul_'+element.id);
+                 
+                 if (ul_child.visible()) {
+                     ul_child.hide();
+                     _toggleClass(li_parent, 'lastCollapsable', 'lastExpandable');
+
                      element.addClassName('closed-hitarea');
                      element.addClassName('expandable-hitarea');
                      element.removeClassName('collapsable-hitarea');
                  }
                  else {
-                     ul.show();
+                     ul_child.show();
+                     _toggleClass(li_parent, 'lastExpandable', 'lastCollapsable');
+                     
                      element.removeClassName('closed-hitarea');
                      element.removeClassName('expandable-hitarea');
                      element.addClassName('collapsable-hitarea');                     
@@ -33,7 +49,7 @@
             <h1><j:out value="${it.displayName}"/></h1>
             
             <div class="report_title">Critério de Busca</div>
-            <ul class="treeview">
+            <ul class="report">
                 <li>Word List: <j:forEach items="${it.finder.words}" var="word">${word}</j:forEach></li>
                 <li>Regex: ${it.finder.regexp}</li>
                 <li>Includes: <j:forEach items="${it.finder.includes}" var="include">${include}</j:forEach></li>
@@ -42,33 +58,43 @@
                 <li class="last">Console Output?: ${it.finder.checkOnlyConsoleOutput}</li>
             </ul>
             
-            <div class="report_title">Resultado da Busca (${it.finder.reports.size()})</div>
-            <ul class="filetree treeview">
+            <div class="report_title">Resultado da Busca</div>
             
-                <j:set var="clsReport" value=""/>
-                <j:set var="clsLi" value="closed expandable"/>
+            <ul class="report">
+                <j:forEach items="${it.finder.reports.keySet()}" var="key" varStatus="statusReports">
+                    <j:set var="reports" value="${it.finder.reports.get(key)}"/>
+                    
+                    <li><span class="filetype">${key} (${reports.size()})</span>
                 
-                <j:forEach items="${it.finder.reports}" var="report" indexVar="indexFile" varStatus="statusReport">
-                    <j:if test="${statusReport.last}">
-                        <j:set var="clsReport" value="lastExpandable-hitarea"/>
-                        <j:set var="clsLi" value="closed expandable lastExpandable"/>
-                    </j:if>
-                
-                    <j:set var="cls" value=""/>
-                    <li class="${clsLi}">
+                        <ul class="filetree treeview">
                         
-                        <div id="${indexFile}" onclick="treeview(this)" class="hitarea closed-hitarea expandable-hitarea ${clsReport}"></div>
+                            <j:set var="clsReport" value=""/>
+                            <j:set var="clsLi" value="closed expandable"/>
                         
-                        <span class="file">${report.fileName} (${report.lines.size()})</span>
-                        <ul id="ul_${indexFile}" style="display:none">
-                            <j:forEach items="${report.lines}" var="line" varStatus="status" indexVar="indexLine">
-                                <j:if test="${status.last}">
-                                    <j:set var="cls" value="last"/>
+                            <j:forEach items="${reports}" var="report" indexVar="indexFile" varStatus="statusReport">
+                                <j:if test="${statusReport.last}">
+                                    <j:set var="clsReport" value="lastExpandable-hitarea"/>
+                                    <j:set var="clsLi" value="expandable lastExpandable"/>
                                 </j:if>
-                                <li class="${cls}"><pre lang="sh_java">${line}</pre></li>
+                            
+                                <j:set var="cls" value=""/>
+                                <li id="li_${indexFile}" class="${clsLi}">
+                                    
+                                    <div id="${indexFile}" onclick="treeview(this)" class="hitarea closed-hitarea expandable-hitarea ${clsReport}"></div>
+                                    
+                                    <span class="file">${report.fileName} (${report.lines.size()})</span>
+                                    <ul id="ul_${indexFile}" style="display:none">
+                                        <j:forEach items="${report.lines}" var="line" varStatus="status" indexVar="indexLine">
+                                            <j:if test="${status.last}">
+                                                <j:set var="cls" value="last"/>
+                                            </j:if>
+                                            <li class="${cls}"><code>${line}</code></li>
+                                        </j:forEach>
+                                    </ul>
+                                </li>
                             </j:forEach>
                         </ul>
-                    </li>
+                     </li>
                 </j:forEach>
             </ul>
 
