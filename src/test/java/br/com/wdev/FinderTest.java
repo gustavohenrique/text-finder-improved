@@ -64,14 +64,19 @@ public class FinderTest extends TestCase {
         finder.words = words;
         finder.findText();
         
-        List<Report> reports = finder.reports.get("other");
+        List<Report> javaReports = finder.reports.get("java");
+        assertEquals(2, javaReports.size());
+        assertEquals("app/controllers/Dashboard.java", javaReports.get(0).getFileName());
+        assertEquals("app/models/Customer.java", javaReports.get(1).getFileName());
         
-        assertEquals(5, reports.size());
-        assertEquals("app/controllers/Dashboard.java", reports.get(0).getFileName());
-        assertEquals("app/models/Customer.java", reports.get(1).getFileName());
-        assertEquals("app/views/errors/phone.html", reports.get(2).getFileName());
-        assertEquals("app/views/main.html", reports.get(3).getFileName());
-        assertEquals("conf/messages", reports.get(4).getFileName());
+        List<Report> htmlReports = finder.reports.get("html");
+        assertEquals(2, htmlReports.size());
+        assertEquals("app/views/errors/phone.html", htmlReports.get(0).getFileName());
+        assertEquals("app/views/main.html", htmlReports.get(1).getFileName());
+        
+        List<Report> otherReports = finder.reports.get("other");
+        assertEquals(1, otherReports.size());
+        assertEquals("conf/messages", otherReports.get(0).getFileName());
     }
 	
 	@Test
@@ -85,7 +90,7 @@ public class FinderTest extends TestCase {
         
         finder.findText();
         
-        List<Report> reports = finder.reports.get("other");
+        List<Report> reports = finder.reports.get("html");
         
         assertEquals(2, reports.size());
         assertEquals("app/views/errors/phone.html", reports.get(0).getFileName());
@@ -147,13 +152,18 @@ public class FinderTest extends TestCase {
         finder.regexp = regexp;
         finder.findText();
         
-        List<Report> reports = finder.reports.get("other");
+        List<Report> javaReports = finder.reports.get("java");
+        assertEquals(2, javaReports.size());
+        assertEquals("app/controllers/Dashboard.java", javaReports.get(0).getFileName());
+        assertEquals("app/models/Customer.java", javaReports.get(1).getFileName());
         
-        assertEquals(4, reports.size());
-        assertEquals("app/controllers/Dashboard.java", reports.get(0).getFileName());
-        assertEquals("app/models/Customer.java", reports.get(1).getFileName());
-        assertEquals("app/views/main.html", reports.get(2).getFileName());
-        assertEquals("conf/messages", reports.get(3).getFileName());
+        List<Report> htmlReports = finder.reports.get("html");
+        assertEquals(1, htmlReports.size());
+        assertEquals("app/views/main.html", htmlReports.get(0).getFileName());
+        
+        List<Report> otherReports = finder.reports.get("other");
+        assertEquals(1, otherReports.size());
+        assertEquals("conf/messages", otherReports.get(0).getFileName());
     }
 	
 }

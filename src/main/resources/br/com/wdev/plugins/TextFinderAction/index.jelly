@@ -46,6 +46,9 @@
         </l:side-panel>
         
         <l:main-panel>
+        
+            <?jelly escape-by-default='true'?>
+        
             <h1><j:out value="${it.displayName}"/></h1>
             
             <div class="report_title">Critério de Busca</div>
@@ -61,40 +64,45 @@
             <div class="report_title">Resultado da Busca</div>
             
             <ul class="report">
-                <j:forEach items="${it.finder.reports.keySet()}" var="key" varStatus="statusReports">
+                <j:forEach items="${it.finder.reports.keySet()}" var="key" indexVar="indexReports">
                     <j:set var="reports" value="${it.finder.reports.get(key)}"/>
                     
-                    <li><span class="filetype">${key} (${reports.size()})</span>
-                
-                        <ul class="filetree treeview">
-                        
-                            <j:set var="clsReport" value=""/>
-                            <j:set var="clsLi" value="closed expandable"/>
-                        
-                            <j:forEach items="${reports}" var="report" indexVar="indexFile" varStatus="statusReport">
-                                <j:if test="${statusReport.last}">
-                                    <j:set var="clsReport" value="lastExpandable-hitarea"/>
-                                    <j:set var="clsLi" value="expandable lastExpandable"/>
-                                </j:if>
+                    <j:if test="${reports.size() > 0}">
+                    
+                        <li><span class="filetype">${key} - ${reports.size()} arquivo(s)</span>
+                    
+                            <ul class="filetree treeview">
                             
-                                <j:set var="cls" value=""/>
-                                <li id="li_${indexFile}" class="${clsLi}">
-                                    
-                                    <div id="${indexFile}" onclick="treeview(this)" class="hitarea closed-hitarea expandable-hitarea ${clsReport}"></div>
-                                    
-                                    <span class="file">${report.fileName} (${report.lines.size()})</span>
-                                    <ul id="ul_${indexFile}" style="display:none">
-                                        <j:forEach items="${report.lines}" var="line" varStatus="status" indexVar="indexLine">
-                                            <j:if test="${status.last}">
-                                                <j:set var="cls" value="last"/>
-                                            </j:if>
-                                            <li class="${cls}"><code>${line}</code></li>
-                                        </j:forEach>
-                                    </ul>
-                                </li>
-                            </j:forEach>
-                        </ul>
-                     </li>
+                                <j:set var="clsReport" value=""/>
+                                <j:set var="clsLi" value="closed expandable"/>
+                            
+                                <j:forEach items="${reports}" var="report" indexVar="indexFile" varStatus="statusReport">
+                                    <j:if test="${statusReport.last}">
+                                        <j:set var="clsReport" value="lastExpandable-hitarea"/>
+                                        <j:set var="clsLi" value="expandable lastExpandable"/>
+                                    </j:if>
+                                
+                                    <j:set var="cls" value=""/>
+                                    <li id="li_${indexReports}_${indexFile}" class="${clsLi}">
+                                        
+                                        <div id="${indexReports}_${indexFile}" onclick="treeview(this)" class="hitarea closed-hitarea expandable-hitarea ${clsReport}"></div>
+                                        
+                                        <span class="file"><pre>${report.fileName} (${report.lines.size()})</pre></span>
+                                        
+                                        <ul id="ul_${indexReports}_${indexFile}" style="display:none">
+                                            <j:forEach items="${report.lines}" var="line" varStatus="status" indexVar="indexLine" escapeText="true">
+                                                <j:if test="${status.last}">
+                                                    <j:set var="cls" value="last"/>
+                                                </j:if>
+                                                <li class="${cls}"><pre>${line}</pre></li>
+                                            </j:forEach>
+                                        </ul>
+                                    </li>
+                                </j:forEach>
+                            </ul>
+                         </li>
+                         
+                    </j:if>
                 </j:forEach>
             </ul>
 

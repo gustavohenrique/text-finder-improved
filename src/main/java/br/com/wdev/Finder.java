@@ -79,14 +79,21 @@ public class Finder implements Serializable {
             String filetype = getFiletype(include);
             reports.put(filetype, new ArrayList<Report>());
         }
-        reports.put(OTHER, new ArrayList<Report>());
+        //reports.put(OTHER, new ArrayList<Report>());
     }
 	
 	private List<Report> getReportListBy(String filetype) {
-        return (reports.containsKey(filetype)) ? reports.get(filetype) : reports.get(OTHER);
+        if (reports.containsKey(filetype)) {
+            return reports.get(filetype);
+        }
+        ArrayList<Report> reportList = new ArrayList<Report>();
+        reports.put(filetype, reportList);
+        return reportList;
     }
 
     private String getFiletype(String includedFile) {
+        if (includedFile.startsWith(".")) return OTHER;
+        
 	    String[] splited = includedFile.split("\\.");
 	    return (splited.length > 1) ? splited[splited.length - 1] : OTHER; 
     }
