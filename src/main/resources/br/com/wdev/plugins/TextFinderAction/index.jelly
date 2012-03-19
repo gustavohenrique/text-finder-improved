@@ -3,42 +3,14 @@
     
         <l:header>
            <link rel="Stylesheet" href="${rootURL}/plugin/text-finder-improved/css/treeview.css" type="text/css"/>
-           <style type="text/css">
-               ul.report { list-style: none; margin:0; padding:10px; line-height:15px }
-               .report_title { background-color:#d8d8d8; padding:4px; font-size:11pt; margin-top:10px }
-               .filetype { font-size:10pt; margin-top:10px; font-weight:bold }
-           </style>
+           
            <script type="text/javascript">
-             function _toggleClass(element, c1, c2) {
-                 if (element.hasClassName(c1)) {
-                     element.removeClassName(c1);
-                     element.addClassName(c2);
-                 }
-                 
-             }
-             
-             function treeview(element) {
-                 var li_parent = $('li_'+element.id), 
-                     ul_child = $('ul_'+element.id);
-                 
-                 if (ul_child.visible()) {
-                     ul_child.hide();
-                     _toggleClass(li_parent, 'lastCollapsable', 'lastExpandable');
-
-                     element.addClassName('closed-hitarea');
-                     element.addClassName('expandable-hitarea');
-                     element.removeClassName('collapsable-hitarea');
-                 }
-                 else {
-                     ul_child.show();
-                     _toggleClass(li_parent, 'lastExpandable', 'lastCollapsable');
-                     
-                     element.removeClassName('closed-hitarea');
-                     element.removeClassName('expandable-hitarea');
-                     element.addClassName('collapsable-hitarea');                     
-                 }
-             }
+               searchArray = [<j:forEach items="${it.finder.words}" var="word">'${word}',</j:forEach>];
            </script>
+          
+           <script type="text/javascript" src="${rootURL}/plugin/text-finder-improved/js/treeview.js"/>
+           <script type="text/javascript" src="${rootURL}/plugin/text-finder-improved/js/highlight.js"/>
+          
         </l:header>
     
         <l:side-panel>
@@ -51,7 +23,7 @@
         
             <h1><j:out value="${it.displayName}"/></h1>
             
-            <div class="report_title">Critério de Busca</div>
+            <div class="report_title">Critério Utilizado</div>
             <ul class="report">
                 <li>Word List: <j:forEach items="${it.finder.words}" var="word">${word}</j:forEach></li>
                 <li>Regex: ${it.finder.regexp}</li>
@@ -61,7 +33,37 @@
                 <li class="last">Console Output?: ${it.finder.checkOnlyConsoleOutput}</li>
             </ul>
             
+            
+            
             <div class="report_title">Resultado da Busca</div>
+            
+            <table class="pane bigtable" border="1" style="width:50%;margin:10px">
+                <thead>
+                   <th>Tipo do Arquivo</th>
+                   <th>Quantidade de Arquivos</th>
+                   <th>Total Linhas</th>
+                </thead>
+                <tbody>
+                   
+                    <j:forEach items="${it.finder.reports.keySet()}" var="key" indexVar="indexReports">
+                        <j:set var="reports" value="${it.finder.reports.get(key)}"/>
+                        
+                        <j:if test="${reports.size() > 0}">
+                            <tr>
+                                <td>${key}</td>
+                                <td>${reports.size()}</td>
+                                <td>
+                                    <j:set var="total" value="0"/>
+                                    <j:forEach items="${reports}" var="report">
+                                        <j:set var="total" value="${report.lines.size() + total}"/>
+                                    </j:forEach>
+                                    ${total}
+                                </td>
+                            </tr>
+                        </j:if>
+                    </j:forEach>
+                </tbody>
+            </table>
             
             <ul class="report">
                 <j:forEach items="${it.finder.reports.keySet()}" var="key" indexVar="indexReports">

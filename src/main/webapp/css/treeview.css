@@ -72,3 +72,8 @@
 .filetree span.folder { background: url(images/folder.gif) 0 0 no-repeat; }
 .filetree li.expandable span.folder { background: url(images/folder-closed.gif) 0 0 no-repeat; }
 .filetree span.file { background: url(images/file.gif) 0 0 no-repeat; }
+
+ul.report { list-style: none; margin:0; padding:10px; line-height:15px }
+.report_title { background-color:#d8d8d8; padding:4px; font-size:11pt; margin-top:10px }
+.filetype { font-size:10pt; margin-top:10px; font-weight:bold }
+.highlight { color:blue; background-color:yellow; }
